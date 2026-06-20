@@ -6,6 +6,7 @@ from mesa_viz_tornado.ModularVisualization import ModularServer
 from mesa_viz_tornado.modules import CanvasGrid, ChartModule
 from mesa_viz_tornado.UserParam import *
 import tornado.web
+import mimetypes
 
 import mammoth_wolf_abm as mw
 
@@ -86,12 +87,12 @@ canvas_element = CanvasGrid(portrayal_method=ws_model_portrayal,
                             canvas_width=600, canvas_height=600)
 
 chart_list = [
-    {"Label": "Number of rabbits", "Color": "blue"},
-    {"Label": "Number of female rabbits", "Color": "gray"},
-    {"Label": "Number of male rabbits", "Color": "#975C24"},
-    {"Label": "Number of foxes", "Color": "black"},
-    {"Label": "Number of female foxes", "Color": "orange"},
-    {"Label": "Number of male foxes", "Color": "red"},
+    {"Label": "Number of mammoths", "Color": "blue"},
+    {"Label": "Number of female mammoths", "Color": "gray"},
+    {"Label": "Number of male mammoths", "Color": "#975C24"},
+    {"Label": "Number of wolves", "Color": "black"},
+    {"Label": "Number of female wolves", "Color": "orange"},
+    {"Label": "Number of male wolves", "Color": "red"},
     {"Label": "Ratio of grass patches (%)", "Color": "green"},
     {"Label": "Ratio of weed patches (%)", "Color": "purple"}
 ]
@@ -106,21 +107,21 @@ params = {
     "height": 30,
     "torus": Checkbox(name="Torus", value=True, description="Whether the edges are connected or not."),
     "model_type": Choice(name="Model type", value=model_types[1], choices=model_types),
-    "n_rabbit": Slider(name="Initial number of rabbits", value=150, min_value=0, max_value=200, step=1),
-    "n_fox": Slider(name="Initial number of foxes", value=0, min_value=0, max_value=200, step=1),
-    "rabbit_ep_gain_grass": Slider(name="EP gain from eating grass (rabbits)",
+    "n_mammoth": Slider(name="Initial number of mammoths", value=150, min_value=0, max_value=200, step=1),
+    "n_wolf": Slider(name="Initial number of wolves", value=0, min_value=0, max_value=200, step=1),
+    "mammoth_ep_gain_grass": Slider(name="EP gain from eating grass (mammoths)",
                                    value=5, min_value=0, max_value=100, step=1),
-    "rabbit_ep_gain_weed": Slider(name="EP gain from eating weeds (rabbits)",
+    "mammoth_ep_gain_weed": Slider(name="EP gain from eating weeds (mammoths)",
                                   value=0, min_value=0, max_value=100, step=1),
-    "fox_ep_gain": Slider(name="EP gain from eating rabbits (foxes)",
+    "wolf_ep_gain": Slider(name="EP gain from eating mammoths (wolves)",
                           value=5, min_value=0, max_value=100, step=1),
-    "rabbit_max_init_ep": Slider(name="Rabbits' maximal initial EP",
+    "mammoth_max_init_ep": Slider(name="Mammoths' maximal initial EP",
                                  value=10, min_value=1, max_value=100, step=1),
-    "fox_max_init_ep": Slider(name="Foxes' maximal initial EP",
+    "wolf_max_init_ep": Slider(name="Wolves' maximal initial EP",
                               value=10, min_value=1, max_value=100, step=1),
-    "rabbit_reproduction_threshold": Slider("Rabbits' reproduction threshold (EP)",
+    "mammoth_reproduction_threshold": Slider("Mammoths' reproduction threshold (EP)",
                                             value=15, min_value=1, max_value=100, step=1),
-    "fox_reproduction_threshold": Slider(name="Foxes' reproduction threshold (EP)",
+    "wolf_reproduction_threshold": Slider(name="Wolves' reproduction threshold (EP)",
                                          value=15, min_value=1, max_value=100, step=1),
     "grass_regrow_rate": Slider(name="Grass' regrow rate (%)", value=6, min_value=0, max_value=100, step=1),
     "weed_regrow_rate": Slider(name="Weeds' regrow rate (%)", value=0, min_value=0, max_value=100, step=1),
@@ -143,3 +144,7 @@ server = MammothWolfServer(
     model_params=params
 )
 server.local_js_includes.add("custom/mammoth_wolf_abm/js/LangSwitch.js")
+
+# Windows fix
+if "text/css" not in mimetypes.guess_type("style.css"):
+    mimetypes.add_type("text/css", ".css")
