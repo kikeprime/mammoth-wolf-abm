@@ -1,6 +1,6 @@
-<h1>Rabbits, Grass and Weeds population model<br>
-<img src="rabbitgrassweed/pics/frabbit.png">
-<img src="rabbitgrassweed/pics/rabbit.png"></h1>
+<h1>Mammoths and Wolves population model<br>
+<img src="mammoth_wolf_abm/pics/frabbit.png">
+<img src="mammoth_wolf_abm/pics/rabbit.png"></h1>
 
 <h2>Introduction</h2>
 
@@ -83,7 +83,7 @@ So, if the exponent is 0 there's no limitation. It's imortant to note the reason
 
 <br><h3>Handling</h3>
 
-<img src="rabbitgrassweed/pics/viz_showcase_eng.png" width=700><br>
+<img src="mammoth_wolf_abm/pics/viz_showcase_eng.png" width=700><br>
 
 The figure above is a screenshot of the app in initial state with deafult parameters.<br>
 

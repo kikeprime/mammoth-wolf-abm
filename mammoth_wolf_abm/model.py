@@ -11,7 +11,7 @@ import mammoth_wolf_abm as mw
 
 class MammothWolfModel(Model):
     """
-    Class for the RabbitGrassWeed model.
+    Class for the MammothWolf model.
 
     Parameters:
         width (int): Width of the grid
@@ -56,11 +56,11 @@ class MammothWolfModel(Model):
         # model-version in the NetLogo code
         model_types = {
             "Extended model": 0,
-            "Rabbits, Grass and Weeds model": 1,
-            "Foxes and Rabbits Lotka-Volterra model": 2,
+            "Mammoths and Wolves model": 1,
+            "Mammoths and Wolves Lotka-Volterra model": 2,
             "Bővített modell": 0,
-            "Nyulak, fű és gyomnövények modell": 1,
-            "Rókák és nyulak Lotka-Volterra-modell": 2
+            "Mamutok és farkasok modell": 1,
+            "Mamutok és farkasok Lotka-Volterra-modell": 2
         }
         self.model_type = model_types[model_type]
 
@@ -133,12 +133,12 @@ class MammothWolfModel(Model):
 
         self.datacollector = DataCollector(
             model_reporters={
-                "Number of rabbits": self.mammoth_counter,
-                "Number of foxes": self.wolf_counter,
-                "Number of female rabbits": self.female_mammoth_counter,
-                "Number of male rabbits": self.male_mammoth_counter,
-                "Number of female foxes": self.female_wolf_counter,
-                "Number of male foxes": self.male_wolf_counter,
+                "Number of mammoths": self.mammoth_counter,
+                "Number of wolves": self.wolf_counter,
+                "Number of female mammoths": self.female_mammoth_counter,
+                "Number of male mammoths": self.male_mammoth_counter,
+                "Number of female wolves": self.female_wolf_counter,
+                "Number of male wolves": self.male_wolf_counter,
                 "Ratio of grass patches (%)": self.grass_counter,
                 "Ratio of weed patches (%)": self.weed_counter
             }

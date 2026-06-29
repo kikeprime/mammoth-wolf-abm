@@ -1,6 +1,6 @@
-<h1>Nyulak, fű és gyomnövények populációmodell<br>
-<img src="rabbitgrassweed/pics/frabbit.png">
-<img src="rabbitgrassweed/pics/rabbit.png"></h1>
+<h1>Mamutok és farkasok populációmodell<br>
+<img src="mammoth_wolf_abm/pics/frabbit.png">
+<img src="mammoth_wolf_abm/pics/rabbit.png"></h1>
 
 <br>
 
@@ -87,7 +87,7 @@ Tehát, ha a kitevő 0, akkor nincs korlátozás. Fontos megjegyezni, hogy a kit
 
 <br><h3>Kezelés</h3>
 
-<img src="rabbitgrassweed/pics/viz_showcase_hun.png" width=500><br>
+<img src="mammoth_wolf_abm/pics/viz_showcase_hun.png" width=500><br>
 
 A fenti ábrán egy az alapértelmezett paraméterekkel, kezdeti állapotban készült képernyőkép látható.<br>
 

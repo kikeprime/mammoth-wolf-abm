@@ -7,12 +7,12 @@ config = { attributes: true, childList: true, subtree: true }
 navbar.innerHTML += `
 <div><p>Tab</p></div>
 <div id="lang-flag">
-<img width="64" src="rabbitgrassweed/pics/Flag_of_Hungary.svg" alt="Set language to Hungarian">
+<img width="64" src="mammoth_wolf_abm/pics/Flag_of_Hungary.svg" alt="Set language to Hungarian">
 </div>
 `
 
 // Initialize description
-fetch("rabbitgrassweed/docs/eng_description.md")
+fetch("mammoth_wolf_abm/docs/eng_description.md")
     .then(response => response.text())
     .then(text => description.innerHTML = text)
 
@@ -48,17 +48,17 @@ function SwitchToHun() {
     HeaderToHun()
     ButtonsToHun()
     ParamsToHun()
-    lang_flag.firstElementChild.src = "rabbitgrassweed/pics/Flag_of_the_United_Kingdom_(1-2).svg"
+    lang_flag.firstElementChild.src = "mammoth_wolf_abm/pics/Flag_of_the_United_Kingdom_(1-2).svg"
     lang_flag.firstElementChild.alt = "Nyelv angolra állítása"
     lang = "hu"
 }
 
 function HeaderToHun() {
     document.title = "Nyulak, fű és gyomnövények (Mesa vizualizáció)"
-    document.getElementsByClassName("navbar-brand")[0].innerText = "Nyulak, fű és gyomnövények"
-    document.getElementsByClassName("modal-title")[0].innerText = "Nyulak, fű és gyomnövények leírás"
+    document.getElementsByClassName("navbar-brand")[0].innerText = "Mamutok és farkasok"
+    document.getElementsByClassName("modal-title")[0].innerText = "Mamutok és farkasok leírás"
 
-    fetch("rabbitgrassweed/docs/hun_description.md")
+    fetch("mammoth_wolf_abm/docs/hun_description.md")
         .then(response => response.text())
         .then(text => description.innerHTML = text)
 }
@@ -84,32 +84,32 @@ function ParamsToHun() {
     let model_type = document.getElementById("model_type_id")
     model_type.parentElement.firstElementChild.firstElementChild.innerText = "Modelltípus"
     model_type.children[0].innerText = "Bővített modell"
-    model_type.children[1].innerText = "Nyulak, fű és gyomnövények modell"
-    model_type.children[2].innerText = "Rókák és nyulak Lotka-Volterra-modell"
-    // Initial number of rabbits
-    document.getElementById("n_rabbit_id_tooltip").innerText = "A nyulak kezdeti száma"
-    // Initial number of foxes
-    document.getElementById("n_fox_id_tooltip").innerText = "A rókák kezdeti száma"
-    // EP gain from eating grass (rabbits)
-    document.getElementById("rabbit_ep_gain_grass_id_tooltip").innerText =
+    model_type.children[1].innerText = "Mamutok és farkasok modell"
+    model_type.children[2].innerText = "Mamutok és farkasok Lotka-Volterra-modell"
+    // Initial number of mammoths
+    document.getElementById("n_mammoth_id_tooltip").innerText = "A nyulak kezdeti száma"
+    // Initial number of wolves
+    document.getElementById("n_wolf_id_tooltip").innerText = "A rókák kezdeti száma"
+    // EP gain from eating grass (mammoths)
+    document.getElementById("mammoth_ep_gain_grass_id_tooltip").innerText =
         "Fűből nyert EP (nyulak)"
-    // EP gain from eating weeds (rabbits)
-    document.getElementById("rabbit_ep_gain_weed_id_tooltip").innerText =
+    // EP gain from eating weeds (mammoths)
+    document.getElementById("mammoth_ep_gain_weed_id_tooltip").innerText =
         "Gyomnövényekből nyert EP (nyulak)"
-    // EP gain from eating rabbits (foxes)
-    document.getElementById("fox_ep_gain_id_tooltip").innerText =
+    // EP gain from eating mammoths (wolves)
+    document.getElementById("wolf_ep_gain_id_tooltip").innerText =
         "Nyulakból nyert EP (rókák)"
-    // Rabbits' maximal initial EP
-    document.getElementById("rabbit_max_init_ep_id_tooltip").innerText =
+    // mammoths' maximal initial EP
+    document.getElementById("mammoth_max_init_ep_id_tooltip").innerText =
         "A nyulak maximális kezdeti EP-je"
-    // Foxes' maximal initial EP
-    document.getElementById("fox_max_init_ep_id_tooltip").innerText =
+    // Wolves' maximal initial EP
+    document.getElementById("wolf_max_init_ep_id_tooltip").innerText =
         "A rókák maximális kezdeti EP-je"
-    // Rabbits' reproduction threshold (EP)
-    document.getElementById("rabbit_reproduction_threshold_id_tooltip").innerText =
+    // Mammoths' reproduction threshold (EP)
+    document.getElementById("mammoth_reproduction_threshold_id_tooltip").innerText =
         "A nyulak szaporodási küszöbe (EP)"
-    // Foxes' reproduction threshold (EP)
-    document.getElementById("fox_reproduction_threshold_id_tooltip").innerText =
+    // Wolves' reproduction threshold (EP)
+    document.getElementById("wolf_reproduction_threshold_id_tooltip").innerText =
         "A rókák szaporodási küszöbe (EP)"
     // Grass' regrow rate (%)
     document.getElementById("grass_regrow_rate_id_tooltip").innerText = "A fű visszanövési rátája (%)"
@@ -136,17 +136,17 @@ function SwitchToEng() {
     HeaderToEng()
     ButtonsToEng()
     ParamsToEng()
-    lang_flag.firstElementChild.src = "rabbitgrassweed/pics/Flag_of_Hungary.svg"
+    lang_flag.firstElementChild.src = "mammoth_wolf_abm/pics/Flag_of_Hungary.svg"
     lang_flag.firstElementChild.alt = "Set language to Hungarian"
     lang = "en"
 }
 
 function HeaderToEng() {
-    document.title = "Rabbits, Grass and Weeds (Mesa visualization)"
-    document.getElementsByClassName("navbar-brand")[0].innerText = "Rabbits, Grass and Weeds"
-    document.getElementsByClassName("modal-title")[0].innerText = "About Rabbits, Grass and Weeds"
+    document.title = "Mammoths and Wolves (Mesa visualization)"
+    document.getElementsByClassName("navbar-brand")[0].innerText = "Mammoths and Wolves"
+    document.getElementsByClassName("modal-title")[0].innerText = "About Mammoths and Wolves"
 
-    fetch("rabbitgrassweed/docs/eng_description.md")
+    fetch("mammoth_wolf_abm/docs/eng_description.md")
         .then(response => response.text())
         .then(text => description.innerHTML = text)
 }
@@ -171,33 +171,33 @@ function ParamsToEng() {
     let model_type = document.getElementById("model_type_id")
     model_type.parentElement.firstElementChild.firstElementChild.innerText = "Model type"
     model_type.children[0].innerText = "Extended model"
-    model_type.children[1].innerText = "Rabbits, Grass and Weeds model"
-    model_type.children[2].innerText = "Foxes and Rabbits Lotka-Volterra model"
-    // Initial number of rabbits
-    document.getElementById("n_rabbit_id_tooltip").innerText = "Initial number of rabbits"
-    // Initial number of foxes
-    document.getElementById("n_fox_id_tooltip").innerText = "Initial number of foxes"
-    // EP gain from eating grass (rabbits)
-    document.getElementById("rabbit_ep_gain_grass_id_tooltip").innerText =
-        "EP gain from eating grass (rabbits)"
-    // EP gain from eating weeds (rabbits)
-    document.getElementById("rabbit_ep_gain_weed_id_tooltip").innerText =
-        "EP gain from eating weeds (rabbits)"
-    // EP gain from eating rabbits (foxes)
-    document.getElementById("fox_ep_gain_id_tooltip").innerText =
-        "EP gain from eating rabbits (foxes)"
-    // Rabbits' maximal initial EP
-    document.getElementById("rabbit_max_init_ep_id_tooltip").innerText =
-        "Rabbits' maximal initial EP"
-    // Foxes' maximal initial EP
-    document.getElementById("fox_max_init_ep_id_tooltip").innerText =
-        "Foxes' maximal initial EP"
-    // Rabbits' reproduction threshold (EP)
-    document.getElementById("rabbit_reproduction_threshold_id_tooltip").innerText =
-        "Rabbits' reproduction threshold (EP)"
-    // Foxes' reproduction threshold (EP)
-    document.getElementById("fox_reproduction_threshold_id_tooltip").innerText =
-        "Foxes' reproduction threshold (EP)"
+    model_type.children[1].innerText = "Mammoths and Wolves model"
+    model_type.children[2].innerText = "Mammoths and Wolves Lotka-Volterra model"
+    // Initial number of mammoths
+    document.getElementById("n_mammoth_id_tooltip").innerText = "Initial number of mammoths"
+    // Initial number of wolves
+    document.getElementById("n_wolf_id_tooltip").innerText = "Initial number of wolves"
+    // EP gain from eating grass (mammoths)
+    document.getElementById("mammoth_ep_gain_grass_id_tooltip").innerText =
+        "EP gain from eating grass (mammoths)"
+    // EP gain from eating weeds (mammoths)
+    document.getElementById("mammoth_ep_gain_weed_id_tooltip").innerText =
+        "EP gain from eating weeds (mammoths)"
+    // EP gain from eating mammoths (wolves)
+    document.getElementById("wolf_ep_gain_id_tooltip").innerText =
+        "EP gain from eating mammoths (wolves)"
+    // Mammoths' maximal initial EP
+    document.getElementById("mammoth_max_init_ep_id_tooltip").innerText =
+        "Mammoths' maximal initial EP"
+    // Wolves' maximal initial EP
+    document.getElementById("wolf_max_init_ep_id_tooltip").innerText =
+        "Wolves' maximal initial EP"
+    // Mammoths' reproduction threshold (EP)
+    document.getElementById("mammoth_reproduction_threshold_id_tooltip").innerText =
+        "Mammoths' reproduction threshold (EP)"
+    // Wolves' reproduction threshold (EP)
+    document.getElementById("wolf_reproduction_threshold_id_tooltip").innerText =
+        "Wolves' reproduction threshold (EP)"
     // Grass' regrow rate (%)
     document.getElementById("grass_regrow_rate_id_tooltip").innerText = "Grass' regrow rate (%)"
     // Weeds' regrow rate (%)

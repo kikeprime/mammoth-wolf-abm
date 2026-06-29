@@ -101,7 +101,7 @@ chart_element_grass = ChartModule(series=chart_list[-2:], data_collector_name="d
 
 viz_elements = [canvas_element, chart_element, chart_element_grass]
 
-model_types = ["Extended model", "Rabbits, Grass and Weeds model", "Foxes and Rabbits Lotka-Volterra model"]
+model_types = ["Extended model", "Mammoths and Wolves model", "Mammoths and Wolves Lotka-Volterra model"]
 params = {
     "width": 30,
     "height": 30,

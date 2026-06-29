@@ -1,5 +1,5 @@
 """
-Simulation of RabbitGrassWeed without the server app.
+Simulation of MammothWolf without the server app.
 """
 
 import matplotlib.pyplot as plt
@@ -11,7 +11,7 @@ def main():
     width = 30
     height = 30
     torus = True
-    model_type = "Rabbits, Grass and Weeds model"
+    model_type = "Mammoths and Wolves model"
     n_mammoth = 150
     n_wolf = 50
     mammoth_ep_gain_grass = 5
