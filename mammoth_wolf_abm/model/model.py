@@ -20,11 +20,11 @@ class MammothWolfModel(Model):
         # Params here
 
         if allow_seed:
-            self.random.seed(random_seed)
+            self.random.seed(a=random_seed)
 
         # Adding agents here
 
         self.datacollector = DataCollector(
             model_reporters={}
         )
-        self.datacollector.collect(self)
+        self.datacollector.collect(model=self)
