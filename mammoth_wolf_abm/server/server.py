@@ -40,16 +40,3 @@ class MammothWolfServer(ModularServer):
         # Reinitialize server by calling tornado.web.Application.__init__
         # Taken from the end of ModularServer.__init__
         super(ModularServer, self).__init__(self.handlers, **self.settings)
-
-
-server = MammothWolfServer(
-    model_cls=mw.MammothWolfModel,
-    visualization_elements=viz_elements,
-    name="Mammoths and Wolves",
-    model_params=params
-)
-# server.local_js_includes.add("custom/js/LangSwitch.js")
-
-# Windows fix
-if "text/css" not in mimetypes.guess_type("style.css"):
-    mimetypes.add_type("text/css", ".css")
