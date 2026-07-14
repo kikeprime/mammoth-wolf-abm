@@ -1,7 +1,7 @@
 from mesa.datacollection import DataCollector
 from mesa.model import Model
-from mesa.time import RandomActivation
 from mesa.space import MultiGrid
+from mesa.time import RandomActivation
 
 
 class MammothWolfModel(Model):

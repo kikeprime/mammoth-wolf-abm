@@ -21,7 +21,7 @@ def mw_model_portrayal(agent):
 
 
 with open("mammoth_wolf_abm/server/param_dicts.json5", "r") as file:
-    param_dicts = json5.load(file)
+    param_dicts = json5.load(fp=file)
 
 # Grid sizes must be adjusted here too.
 canvas_element = CanvasGrid(
@@ -29,10 +29,20 @@ canvas_element = CanvasGrid(
     **param_dicts["canvas_element"]
 )
 
-chart_element = ChartModule(series=param_dicts["chart_list"][:-1], data_collector_name="datacollector")
-chart_element_grass = ChartModule(series=param_dicts["chart_list"][-1:], data_collector_name="datacollector")
+chart_element = ChartModule(
+    series=param_dicts["chart_list"][:-1],
+    data_collector_name="datacollector"
+)
+chart_element_grass = ChartModule(
+    series=param_dicts["chart_list"][-1:],
+    data_collector_name="datacollector"
+)
 
-viz_elements = [canvas_element, chart_element, chart_element_grass]
+viz_elements = [
+    canvas_element,
+    chart_element,
+    chart_element_grass
+]
 
 params = {}
 for k, v in param_dicts["params"].items():
