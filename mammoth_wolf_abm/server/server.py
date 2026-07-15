@@ -2,6 +2,7 @@
 This file is responsible for creating the server and its components.
 """
 
+from mammoth_wolf_abm import MammothWolfModel
 from mesa_viz_tornado.ModularVisualization import ModularServer
 import tornado.web
 
@@ -14,11 +15,11 @@ class MammothWolfServer(ModularServer):
 
     def __init__(
             self,
-            model_cls,
-            visualization_elements,
-            name="Mesa Model",
-            model_params=None,
-            port=None
+            model_cls: type[MammothWolfModel],
+            visualization_elements: list | None,
+            name: str = "Mesa Model",
+            model_params: dict | None = None,
+            port: int | None = None
     ):
         """Override ModularServer.__init__"""
         # call ModularServer.__init__
