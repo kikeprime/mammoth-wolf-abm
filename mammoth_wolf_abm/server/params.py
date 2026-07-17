@@ -1,6 +1,5 @@
-import sys
-
 import json5
+import sys
 
 from mesa_viz_tornado.modules import CanvasGrid, ChartModule
 from mesa_viz_tornado.UserParam import *
