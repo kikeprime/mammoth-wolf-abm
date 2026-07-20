@@ -1,11 +1,12 @@
 import json5
 import sys
 
+from mesa.agent import Agent
 from mesa_viz_tornado.modules import CanvasGrid, ChartModule
 from mesa_viz_tornado.UserParam import *
 
 
-def mw_model_portrayal(agent):
+def mw_model_portrayal(agent: Agent):
     """
     Handle agent portrayals.
 

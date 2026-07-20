@@ -2,9 +2,10 @@
 This file is responsible for creating the server and its components.
 """
 
-from mammoth_wolf_abm import MammothWolfModel
 from mesa_viz_tornado.ModularVisualization import ModularServer
 import tornado.web
+
+from mammoth_wolf_abm import MammothWolfModel
 
 
 # Accessing the files from root instead of from /local/custom
