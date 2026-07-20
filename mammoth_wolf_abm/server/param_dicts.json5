@@ -1,0 +1,40 @@
+{
+    "canvas_element": {
+        "grid_width": 30,
+        "grid_height": 30,
+        "canvas_width": 600,
+        "canvas_height": 600,
+    },
+    "chart_list": [
+        {"Label": "Number of mammoths", "Color": "brown"},
+        {"Label": "Number of wolves", "Color": "gray"},
+        {"Label": "Ratio of grass patches (%)", "Color": "green"},
+    ],
+    "params": {
+        "width": 30,
+        "height": 30,
+        "torus": {
+            "type": "Checkbox",
+            "params": {
+                name: "Torus",
+                value: true,
+                description: "Whether the edges are connected or not.",
+            },
+        },
+        "allow_seed": {
+            "type": "Checkbox",
+            "params": {
+                "name": "Allow Seed",
+                "value": true,
+            },
+        },
+        "random_seed": {
+            "type": "NumberInput",
+            "params": {
+                "name": "Random Seed",
+                "value": 474,
+                "description": "Seed for random number generator functions.",
+            },
+        },
+    },
+}
