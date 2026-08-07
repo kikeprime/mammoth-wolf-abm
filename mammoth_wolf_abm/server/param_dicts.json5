@@ -21,6 +21,16 @@
                 description: "Whether the edges are connected or not.",
             },
         },
+        "grass_regrow_rate": {
+            "type": "Slider",
+            "params": {
+                "name": "Grass' regrow rate (%)",
+                "value": 6,
+                "min_value": 0,
+                "max_value": 100,
+                "step": 1,
+            },
+        },
         "allow_seed": {
             "type": "Checkbox",
             "params": {

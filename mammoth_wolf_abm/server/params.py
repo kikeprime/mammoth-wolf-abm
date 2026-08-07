@@ -1,12 +1,13 @@
 import json5
 import sys
 
+from mammoth_wolf_abm.agents import GrassAgent
 from mesa.agent import Agent
 from mesa_viz_tornado.modules import CanvasGrid, ChartModule
 from mesa_viz_tornado.UserParam import *
 
 
-def mw_model_portrayal(agent: Agent):
+def mw_model_portrayal(agent: Agent) -> dict | None:
     """
     Handle agent portrayals.
 
@@ -17,6 +18,19 @@ def mw_model_portrayal(agent: Agent):
         return
 
     portrayal = {}
+
+    # Grass portrayal
+    if isinstance(agent, GrassAgent):
+        if agent.grown:
+            portrayal["Color"] = ["green"]
+        else:
+            portrayal["Color"] = ["#663300"]
+        portrayal["Shape"] = "rect"
+        portrayal["Filled"] = "true"
+        portrayal["Layer"] = 0
+        portrayal["w"] = 1
+        portrayal["h"] = 1
+
     return portrayal
 
 
