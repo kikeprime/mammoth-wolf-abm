@@ -1,5 +1,5 @@
 from importlib.metadata import version
-from mammoth_wolf_abm.model import MammothWolfModel
+from mesa.model import Model
 from mesa.agent import Agent
 
 
@@ -10,12 +10,12 @@ class GrassAgent(Agent):
     Parameters:
         unique_id (int): Unique identifier for this agent (legacy support)
         model (MammothWolfModel): the MammothWolf model
-        grass_regrow_rate (float): Number of steps after grazed cell becomes grown grass again
+        grass_regrow_rate (float): Probability for a grazed cell to become grown grass
     """
     def __init__(
             self,
             unique_id: int,
-            model: MammothWolfModel,
+            model: Model,
             grass_regrow_rate: float,
     ):
         if version("mesa") == "2.4.0":
@@ -33,12 +33,11 @@ class GrassAgent(Agent):
         self.grown = False
         self.grow()
 
-    def step(self):
+    def step(self) -> None:
         self.grow()
 
-    def grow(self):
+    def grow(self) -> None:
         """Handle countdown and regrowing."""
         if not self.grown:
             if self.model.random.random() < self.grass_regrow_rate:
-                self.race = 2
                 self.grown = True
