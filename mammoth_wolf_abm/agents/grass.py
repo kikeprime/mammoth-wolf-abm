@@ -1,7 +1,7 @@
 from importlib.metadata import version
 
-from mesa.model import Model
 from mesa.agent import Agent
+from mesa.model import Model
 
 
 class GrassAgent(Agent):
