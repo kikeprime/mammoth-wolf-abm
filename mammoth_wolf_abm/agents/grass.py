@@ -1,4 +1,5 @@
 from importlib.metadata import version
+
 from mesa.model import Model
 from mesa.agent import Agent
 
@@ -29,14 +30,16 @@ class GrassAgent(Agent):
                 print("Incompatible mesa version.")
 
         self.grass_regrow_rate = grass_regrow_rate
+
         self.race = 2
         self.grown = False
         self.grow()
 
-    def step(self) -> None:
+    def step(self):
+        """Actions of the agent during one step of the simulation."""
         self.grow()
 
-    def grow(self) -> None:
+    def grow(self):
         """Handle countdown and regrowing."""
         if not self.grown:
             if self.model.random.random() < self.grass_regrow_rate:

@@ -1,11 +1,22 @@
-from mammoth_wolf_abm.agents import GrassAgent
 from mesa.datacollection import DataCollector
 from mesa.model import Model
 from mesa.space import MultiGrid
 from mesa.time import RandomActivation
 
+from mammoth_wolf_abm.agents import GrassAgent
+
 
 class MammothWolfModel(Model):
+    """
+    The class for the Mammoth-Dire Wolf model.
+
+    Parameters:
+        width (int): Width of the grid
+        height (int): height of the grid
+        grass_regrow_rate (float): Probability for a grazed cell to become grown grass
+        allow_seed (bool): Toggle random seed
+        random_seed (int): Random seed
+    """
     def __init__(
             self,
             width: int,
@@ -27,6 +38,31 @@ class MammothWolfModel(Model):
         # Adding animal agents here
 
         # Adding grass
+        self.initialize_grass_agents(
+            width=width,
+            height=height,
+            grass_regrow_rate=grass_regrow_rate
+        )
+
+        self.datacollector = DataCollector(
+            model_reporters={
+                "Ratio of grass patches (%)": grass_cell_counter,
+            }
+        )
+        self.datacollector.collect(model=self)
+
+    def step(self):
+        """Actions executed by the model during one step of the simulation."""
+        self.schedule.step()
+        self.datacollector.collect(model=self)
+
+    def initialize_grass_agents(
+            self,
+            width: int,
+            height: int,
+            grass_regrow_rate: float
+    ):
+        """Fill all cells with grass agents."""
         for grass_id in range(width * height):
             grass = GrassAgent(
                 unique_id=self.next_id(),
@@ -36,20 +72,9 @@ class MammothWolfModel(Model):
             self.schedule.add(agent=grass)
             self.grid.place_agent(agent=grass, pos=(grass_id % width, grass_id // width))
 
-        self.datacollector = DataCollector(
-            model_reporters={
-                "Ratio of grass patches (%)": grass_counter,
-            }
-        )
-        self.datacollector.collect(model=self)
-
-    def step(self) -> None:
-        self.schedule.step()
-        self.datacollector.collect(model=self)
-
 
 # Agent counters
-def grass_counter(model: MammothWolfModel) -> float:
+def grass_cell_counter(model: MammothWolfModel) -> float:
     """Return percentage of grown grass."""
     result = 0
     for agent in model.schedule.agents:
