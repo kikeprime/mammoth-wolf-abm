@@ -12,12 +12,14 @@ class GrassAgent(Agent):
         unique_id (int): Unique identifier for this agent (legacy support)
         model (MammothWolfModel): the MammothWolf model
         grass_regrow_rate (float): Probability for a grazed cell to become grown grass
+        grass_regrow_rate_boosted (float): Probability for a grazed cell to become grown grass if boosted by mammoths
     """
     def __init__(
             self,
             unique_id: int,
             model: Model,
             grass_regrow_rate: float,
+            grass_regrow_rate_boosted: float
     ):
         if version("mesa") == "2.4.0":
             super().__init__(unique_id=unique_id, model=model)
@@ -30,9 +32,11 @@ class GrassAgent(Agent):
                 print("Incompatible mesa version.")
 
         self.grass_regrow_rate = grass_regrow_rate
+        self.grass_regrow_rate_boosted = grass_regrow_rate_boosted
 
         self.race = 2
         self.grown = False
+        self.boosted = False
         self.grow()
 
     def step(self):
@@ -42,5 +46,7 @@ class GrassAgent(Agent):
     def grow(self):
         """Handle countdown and regrowing."""
         if not self.grown:
-            if self.model.random.random() < self.grass_regrow_rate:
+            rate = self.grass_regrow_rate_boosted if self.boosted else self.grass_regrow_rate
+            if self.model.random.random() < rate:
                 self.grown = True
+                self.boosted = False

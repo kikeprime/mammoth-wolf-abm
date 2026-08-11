@@ -14,6 +14,7 @@ class MammothWolfModel(Model):
         width (int): Width of the grid
         height (int): height of the grid
         grass_regrow_rate (float): Probability for a grazed cell to become grown grass
+        grass_regrow_rate_boosted (float): Probability for a grazed cell to become grown grass if boosted by mammoths
         allow_seed (bool): Toggle random seed
         random_seed (int): Random seed
     """
@@ -23,6 +24,7 @@ class MammothWolfModel(Model):
             height: int,
             torus: bool,
             grass_regrow_rate: float,
+            grass_regrow_rate_boosted: float,
             allow_seed: bool,
             random_seed: int,
     ):
@@ -41,7 +43,8 @@ class MammothWolfModel(Model):
         self.initialize_grass_agents(
             width=width,
             height=height,
-            grass_regrow_rate=grass_regrow_rate
+            grass_regrow_rate=grass_regrow_rate,
+            grass_regrow_rate_boosted=grass_regrow_rate_boosted
         )
 
         self.datacollector = DataCollector(
@@ -60,19 +63,22 @@ class MammothWolfModel(Model):
             self,
             width: int,
             height: int,
-            grass_regrow_rate: float
+            grass_regrow_rate: float,
+            grass_regrow_rate_boosted: float
     ):
         """
         Fill all cells with grass agents.
         :param int width: Width of the grid
         :param int height: height of the grid
         :param float grass_regrow_rate: Probability for a grazed cell to become grown grass
+        :param float grass_regrow_rate_boosted: Probability for a grazed cell to become grown grass
         """
         for grass_id in range(width * height):
             grass = GrassAgent(
                 unique_id=self.next_id(),
                 model=self,
                 grass_regrow_rate=grass_regrow_rate / 100.0,
+                grass_regrow_rate_boosted=grass_regrow_rate_boosted / 100.0,
             )
             self.schedule.add(agent=grass)
             self.grid.place_agent(agent=grass, pos=(grass_id % width, grass_id // width))
