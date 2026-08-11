@@ -62,7 +62,12 @@ class MammothWolfModel(Model):
             height: int,
             grass_regrow_rate: float
     ):
-        """Fill all cells with grass agents."""
+        """
+        Fill all cells with grass agents.
+        :param int width: Width of the grid
+        :param int height: height of the grid
+        :param float grass_regrow_rate: Probability for a grazed cell to become grown grass
+        """
         for grass_id in range(width * height):
             grass = GrassAgent(
                 unique_id=self.next_id(),
@@ -75,7 +80,11 @@ class MammothWolfModel(Model):
 
 # Agent counters
 def grass_cell_counter(model: MammothWolfModel) -> float:
-    """Return percentage of grown grass."""
+    """
+    Return percentage of grown grass.
+    :param MammothWolfModel model: Model whose grass filled cells are counted
+    :returns float: Percentage of cells filled with grass
+    """
     result = 0
     for agent in model.schedule.agents:
         agent: GrassAgent
