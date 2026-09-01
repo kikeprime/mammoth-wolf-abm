@@ -45,7 +45,7 @@ class MammothAgent(Agent):
         self.birth_interval = birth_interval * 30
 
         self.race = 1
-        self.age = self.model.random.randint(a=1, b=self.max_age)
+        self.age = self.model.random.randint(a=0, b=self.max_age)
         self.ep = self.model.random.randint(a=1, b=self.ep_gain)
 
     def step(self):
