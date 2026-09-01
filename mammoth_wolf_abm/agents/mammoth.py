@@ -1,5 +1,6 @@
 from importlib.metadata import version
 
+import mammoth_wolf_abm.model as abm
 from mesa.agent import Agent
 from mesa.model import Model
 
@@ -50,10 +51,32 @@ class MammothAgent(Agent):
 
     def step(self):
         """Actions of the agent during one step of the simulation."""
+        self.move()
+        self.eat()
+
         self.ep -= 1
-
-        # Further actions go here
-
         self.age += 1
         if self.age >= self.max_age or self.ep <= 0:
-            self.remove()
+            self.destroy()
+
+    def move(self):
+        """Implement movement of the agent."""
+        self.model: abm.MammothWolfModel
+        cells_to_move = self.model.grid.get_neighborhood(
+            pos=self.pos,
+            moore=True,
+            include_center=False,
+            radius=1
+        )
+        dest_cell = self.model.random.choice(seq=cells_to_move)
+        self.model.grid.move_agent(agent=self, pos=dest_cell)
+
+    def eat(self):
+        """Implement eating of the agent."""
+        pass
+
+    def destroy(self):
+        """Implement removal of the agent."""
+        self.model: abm.MammothWolfModel
+        self.model.grid.remove_agent(agent=self)
+        self.model.schedule.remove(agent=self)
