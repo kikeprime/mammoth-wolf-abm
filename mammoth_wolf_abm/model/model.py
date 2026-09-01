@@ -24,20 +24,20 @@ class MammothWolfModel(Model):
         self.datacollector.collect(model=self)
 
     def __init__(
-            self,
-            width: int,
-            height: int,
-            torus: bool,
-            n_mammoth: int,
-            grass_regrow_rate: float,
-            grass_regrow_rate_boosted: float,
-            mammoth_ep_gain: int,
-            mammoth_max_age: int,
-            mammoth_reproductive_age: int,
-            mammoth_gestation_period: int,
-            mammoth_birth_interval: int,
-            allow_seed: bool,
-            random_seed: int,
+        self,
+        width: int,
+        height: int,
+        torus: bool,
+        n_mammoth: int,
+        grass_regrow_rate: float,
+        grass_regrow_rate_boosted: float,
+        mammoth_ep_gain: int,
+        mammoth_max_age: int,
+        mammoth_reproductive_age: int,
+        mammoth_gestation_period: int,
+        mammoth_birth_interval: int,
+        allow_seed: bool,
+        random_seed: int,
     ):
         super().__init__()
         self.schedule = RandomActivation(model=self)
@@ -49,20 +49,15 @@ class MammothWolfModel(Model):
             self.random.seed(a=random_seed)
 
         # Adding mammoths
-        for i in range(self.n_mammoth):
-            mammoth = MammothAgent(
-                unique_id=self.next_id(),
-                model=self,
-                ep_gain=mammoth_ep_gain,
-                max_age=mammoth_max_age,
-                reproductive_age=mammoth_reproductive_age,
-                gestation_period=mammoth_gestation_period,
-                birth_interval=mammoth_birth_interval
-            )
-            self.schedule.add(mammoth)
-            x = self.random.randrange(width)
-            y = self.random.randrange(height)
-            self.grid.place_agent(mammoth, (x, y))
+        self.initialize_mammoth_agents(
+            width=width,
+            height=height,
+            mammoth_ep_gain=mammoth_ep_gain,
+            mammoth_max_age=mammoth_max_age,
+            mammoth_reproductive_age=mammoth_reproductive_age,
+            mammoth_gestation_period=mammoth_gestation_period,
+            mammoth_birth_interval=mammoth_birth_interval
+        )
 
         # Adding grass
         self.initialize_grass_agents(
@@ -78,6 +73,31 @@ class MammothWolfModel(Model):
             }
         )
         self.datacollector.collect(model=self)
+
+    def initialize_mammoth_agents(
+        self,
+        width: int,
+        height: int,
+        mammoth_ep_gain: int,
+        mammoth_max_age: int,
+        mammoth_reproductive_age: int,
+        mammoth_gestation_period: int,
+        mammoth_birth_interval: int
+    ):
+        for i in range(self.n_mammoth):
+            mammoth = MammothAgent(
+                unique_id=self.next_id(),
+                model=self,
+                ep_gain=mammoth_ep_gain,
+                max_age=mammoth_max_age,
+                reproductive_age=mammoth_reproductive_age,
+                gestation_period=mammoth_gestation_period,
+                birth_interval=mammoth_birth_interval
+            )
+            self.schedule.add(agent=mammoth)
+            x = self.random.randrange(width)
+            y = self.random.randrange(height)
+            self.grid.place_agent(agent=mammoth, pos=(x, y))
 
     def initialize_grass_agents(
             self,
