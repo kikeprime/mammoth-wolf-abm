@@ -1,7 +1,7 @@
 import json5
 import sys
 
-from mammoth_wolf_abm.agents import GrassAgent
+from mammoth_wolf_abm.agents import GrassAgent, MammothAgent
 from mesa.agent import Agent
 from mesa_viz_tornado.modules import CanvasGrid, ChartModule
 from mesa_viz_tornado.UserParam import *
@@ -30,6 +30,12 @@ def mw_model_portrayal(agent: Agent) -> dict | None:
         portrayal["Layer"] = 0
         portrayal["w"] = 1
         portrayal["h"] = 1
+
+    # Mammoth portrayal
+    if isinstance(agent, MammothAgent):
+        portrayal["Shape"] = "pics/mammoth.png"
+        portrayal["Layer"] = 1
+        portrayal["EP"] = agent.ep
 
     return portrayal
 

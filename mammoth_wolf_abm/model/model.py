@@ -3,7 +3,7 @@ from mesa.model import Model
 from mesa.space import MultiGrid
 from mesa.time import RandomActivation
 
-from mammoth_wolf_abm.agents import GrassAgent
+from mammoth_wolf_abm.agents import GrassAgent, MammothAgent
 
 
 class MammothWolfModel(Model):
@@ -18,13 +18,24 @@ class MammothWolfModel(Model):
         allow_seed (bool): Toggle random seed
         random_seed (int): Random seed
     """
+    def step(self):
+        """Actions executed by the model during one step of the simulation."""
+        self.schedule.step()
+        self.datacollector.collect(model=self)
+
     def __init__(
             self,
             width: int,
             height: int,
             torus: bool,
+            n_mammoth: int,
             grass_regrow_rate: float,
             grass_regrow_rate_boosted: float,
+            mammoth_ep_gain: int,
+            mammoth_max_age: int,
+            mammoth_reproductive_age: int,
+            mammoth_gestation_period: int,
+            mammoth_birth_interval: int,
             allow_seed: bool,
             random_seed: int,
     ):
@@ -32,12 +43,26 @@ class MammothWolfModel(Model):
         self.schedule = RandomActivation(model=self)
         self.grid = MultiGrid(width=width, height=height, torus=torus)
 
-        # Params here
+        self.n_mammoth = n_mammoth
 
         if allow_seed:
             self.random.seed(a=random_seed)
 
-        # Adding animal agents here
+        # Adding mammoths
+        for i in range(self.n_mammoth):
+            mammoth = MammothAgent(
+                unique_id=self.next_id(),
+                model=self,
+                ep_gain=mammoth_ep_gain,
+                max_age=mammoth_max_age,
+                reproductive_age=mammoth_reproductive_age,
+                gestation_period=mammoth_gestation_period,
+                birth_interval=mammoth_birth_interval
+            )
+            self.schedule.add(mammoth)
+            x = self.random.randrange(width)
+            y = self.random.randrange(height)
+            self.grid.place_agent(mammoth, (x, y))
 
         # Adding grass
         self.initialize_grass_agents(
@@ -52,11 +77,6 @@ class MammothWolfModel(Model):
                 "Ratio of grass patches (%)": grass_cell_counter,
             }
         )
-        self.datacollector.collect(model=self)
-
-    def step(self):
-        """Actions executed by the model during one step of the simulation."""
-        self.schedule.step()
         self.datacollector.collect(model=self)
 
     def initialize_grass_agents(
@@ -93,7 +113,8 @@ def grass_cell_counter(model: MammothWolfModel) -> float:
     """
     result = 0
     for agent in model.schedule.agents:
-        agent: GrassAgent
-        if agent.grown:
-            result += 1
+        if isinstance(agent, GrassAgent):
+            agent: GrassAgent
+            if agent.grown:
+                result += 1
     return 100 * result / float(model.grid.width * model.grid.height)
