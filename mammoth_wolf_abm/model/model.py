@@ -18,11 +18,6 @@ class MammothWolfModel(Model):
         allow_seed (bool): Toggle random seed
         random_seed (int): Random seed
     """
-    def step(self):
-        """Actions executed by the model during one step of the simulation."""
-        self.schedule.step()
-        self.datacollector.collect(model=self)
-
     def __init__(
         self,
         width: int,
@@ -70,6 +65,7 @@ class MammothWolfModel(Model):
         self.datacollector = DataCollector(
             model_reporters={
                 "Ratio of grass patches (%)": grass_cell_counter,
+                "Number of mammoths": mammoth_counter,
             }
         )
         self.datacollector.collect(model=self)
@@ -123,6 +119,11 @@ class MammothWolfModel(Model):
             self.schedule.add(agent=grass)
             self.grid.place_agent(agent=grass, pos=(grass_id % width, grass_id // width))
 
+    def step(self):
+        """Actions executed by the model during one step of the simulation."""
+        self.schedule.step()
+        self.datacollector.collect(model=self)
+
 
 # Agent counters
 def grass_cell_counter(model: MammothWolfModel) -> float:
@@ -138,3 +139,16 @@ def grass_cell_counter(model: MammothWolfModel) -> float:
             if agent.grown:
                 result += 1
     return 100 * result / float(model.grid.width * model.grid.height)
+
+
+def mammoth_counter(model: MammothWolfModel) -> int:
+    """
+    Return the number of mammoths.
+    :param MammothWolfModel model: Model whose grass filled cells are counted
+    :returns int: Number of mammoths
+    """
+    result = 0
+    for agent in model.schedule.agents:
+        if isinstance(agent, MammothAgent):
+            result += 1
+    return result
