@@ -43,6 +43,7 @@ def mw_model_portrayal(agent: Agent) -> dict | None:
         portrayal["Shape"] = "pics/mammoth.png"
         portrayal["Layer"] = 1
         portrayal["Age"] = days_to_years(agent.age)
+        portrayal["Gestation & Birth Interval"] = days_to_years(agent.gestation)
         portrayal["EP"] = agent.ep
 
     return portrayal
