@@ -47,6 +47,10 @@ class MammothAgent(Agent):
         self.race = 1
         self.age = self.model.random.randint(a=0, b=self.max_age)
         self.ep = self.model.random.randint(a=1, b=self.ep_gain)
+        self.gestation = 0
+
+        if self.age >= self.reproductive_age:
+            self.gestation = self.model.random.randint(a=1, b=self.gestation_period+self.birth_interval)
 
     def step(self):
         """Actions of the agent during one step of the simulation."""
@@ -91,9 +95,19 @@ class MammothAgent(Agent):
                 if self.model.random.random() < 0.5:
                     agent.boosted = True
 
+    def can_reproduce(self) -> bool:
+        """Returns true if the agent can reproduce."""
+        age = self.age >= self.reproductive_age
+        gestation = self.gestation <= 0
+        cell = len(self.get_free_cells()) > 0
+        return age and gestation and cell
+
     def reproduce(self):
         """Implement reproduction of the agent."""
-        pass
+        if self.can_reproduce():
+            self.gestation = self.gestation_period + self.birth_interval
+        elif self.gestation > 0:
+            self.gestation -= 1
 
     def destroy(self):
         """Implement removal of the agent."""
