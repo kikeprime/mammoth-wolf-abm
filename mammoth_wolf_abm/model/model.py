@@ -114,15 +114,18 @@ class MammothWolfModel(Model):
                 gestation_period=mammoth_gestation_period,
                 birth_interval=mammoth_birth_interval
             )
-            self.schedule.add(agent=mammoth)
             x = self.random.randrange(width)
             y = self.random.randrange(height)
-            self.grid.place_agent(agent=mammoth, pos=(x, y))
+            self.place_agent(agent=mammoth, pos=(x, y))
 
     def step(self):
         """Actions executed by the model during one step of the simulation."""
         self.schedule.step()
         self.datacollector.collect(model=self)
+
+    def place_agent(self, agent, pos):
+        self.schedule.add(agent=agent)
+        self.grid.place_agent(agent=agent, pos=pos)
 
 
 # Agent counters
