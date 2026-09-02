@@ -8,8 +8,6 @@ from mesa.model import Model
 class MammothAgent(Agent):
     """Agent class for mammoths.
 
-    Implement grazing and flocking.
-
     Parameters:
         unique_id (int): Unique identifier for this agent (legacy support)
         model (MammothWolfModel): the MammothWolf model
@@ -52,9 +50,8 @@ class MammothAgent(Agent):
     def step(self):
         """Actions of the agent during one step of the simulation."""
         self.move()
-        self.eat()
-
         self.ep -= 1
+        self.eat()
         self.age += 1
         if self.age >= self.max_age or self.ep <= 0:
             self.destroy()
