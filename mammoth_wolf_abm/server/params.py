@@ -7,6 +7,13 @@ from mesa_viz_tornado.modules import CanvasGrid, ChartModule
 from mesa_viz_tornado.UserParam import *
 
 
+def days_to_years(days):
+    y = days // 365
+    m = (days % 365) // 30
+    d = (days % 365) % 30
+    return f"{y} years, {m} months, {d} days"
+
+
 def mw_model_portrayal(agent: Agent) -> dict | None:
     """
     Handle agent portrayals.
@@ -35,6 +42,7 @@ def mw_model_portrayal(agent: Agent) -> dict | None:
     if isinstance(agent, MammothAgent):
         portrayal["Shape"] = "pics/mammoth.png"
         portrayal["Layer"] = 1
+        portrayal["Age"] = days_to_years(agent.age)
         portrayal["EP"] = agent.ep
 
     return portrayal

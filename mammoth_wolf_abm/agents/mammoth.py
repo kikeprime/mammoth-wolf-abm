@@ -1,5 +1,6 @@
 from importlib.metadata import version
 
+from .grass import GrassAgent
 import mammoth_wolf_abm.model as abm
 from mesa.agent import Agent
 from mesa.model import Model
@@ -59,18 +60,27 @@ class MammothAgent(Agent):
     def move(self):
         """Implement movement of the agent."""
         self.model: abm.MammothWolfModel
-        cells_to_move = self.model.grid.get_neighborhood(
+        cells = self.model.grid.get_neighborhood(
             pos=self.pos,
             moore=True,
             include_center=False,
             radius=1
         )
-        dest_cell = self.model.random.choice(seq=cells_to_move)
-        self.model.grid.move_agent(agent=self, pos=dest_cell)
+        cells_to_move = []
+        for cell in cells:
+            if len(self.model.grid.get_cell_list_contents(cell)) == 1:
+                cells_to_move.append(cell)
+        if len(cells_to_move) > 0:
+            dest_cell = self.model.random.choice(seq=cells_to_move)
+            self.model.grid.move_agent(agent=self, pos=dest_cell)
 
     def eat(self):
         """Implement eating of the agent."""
-        pass
+        self.model: abm.MammothWolfModel
+        for agent in self.model.grid.get_cell_list_contents([self.pos]):
+            if isinstance(agent, GrassAgent) and agent.grown:
+                self.ep = self.ep_gain
+                agent.grown = False
 
     def destroy(self):
         """Implement removal of the agent."""
