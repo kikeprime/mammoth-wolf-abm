@@ -43,6 +43,14 @@ class MammothWolfModel(Model):
         if allow_seed:
             self.random.seed(a=random_seed)
 
+        # Adding grass
+        self.initialize_grass_agents(
+            width=width,
+            height=height,
+            grass_regrow_rate=grass_regrow_rate,
+            grass_regrow_rate_boosted=grass_regrow_rate_boosted
+        )
+
         # Adding mammoths
         self.initialize_mammoth_agents(
             width=width,
@@ -54,14 +62,6 @@ class MammothWolfModel(Model):
             mammoth_birth_interval=mammoth_birth_interval
         )
 
-        # Adding grass
-        self.initialize_grass_agents(
-            width=width,
-            height=height,
-            grass_regrow_rate=grass_regrow_rate,
-            grass_regrow_rate_boosted=grass_regrow_rate_boosted
-        )
-
         self.datacollector = DataCollector(
             model_reporters={
                 "Ratio of grass patches (%)": grass_cell_counter,
@@ -69,6 +69,30 @@ class MammothWolfModel(Model):
             }
         )
         self.datacollector.collect(model=self)
+
+    def initialize_grass_agents(
+            self,
+            width: int,
+            height: int,
+            grass_regrow_rate: float,
+            grass_regrow_rate_boosted: float
+    ):
+        """
+        Fill all cells with grass agents.
+        :param int width: Width of the grid
+        :param int height: height of the grid
+        :param float grass_regrow_rate: Probability for a grazed cell to become grown grass
+        :param float grass_regrow_rate_boosted: Probability for a grazed cell to become grown grass
+        """
+        for grass_id in range(width * height):
+            grass = GrassAgent(
+                unique_id=self.next_id(),
+                model=self,
+                grass_regrow_rate=grass_regrow_rate / 100.0,
+                grass_regrow_rate_boosted=grass_regrow_rate_boosted / 100.0,
+            )
+            self.schedule.add(agent=grass)
+            self.grid.place_agent(agent=grass, pos=(grass_id % width, grass_id // width))
 
     def initialize_mammoth_agents(
         self,
@@ -94,30 +118,6 @@ class MammothWolfModel(Model):
             x = self.random.randrange(width)
             y = self.random.randrange(height)
             self.grid.place_agent(agent=mammoth, pos=(x, y))
-
-    def initialize_grass_agents(
-            self,
-            width: int,
-            height: int,
-            grass_regrow_rate: float,
-            grass_regrow_rate_boosted: float
-    ):
-        """
-        Fill all cells with grass agents.
-        :param int width: Width of the grid
-        :param int height: height of the grid
-        :param float grass_regrow_rate: Probability for a grazed cell to become grown grass
-        :param float grass_regrow_rate_boosted: Probability for a grazed cell to become grown grass
-        """
-        for grass_id in range(width * height):
-            grass = GrassAgent(
-                unique_id=self.next_id(),
-                model=self,
-                grass_regrow_rate=grass_regrow_rate / 100.0,
-                grass_regrow_rate_boosted=grass_regrow_rate_boosted / 100.0,
-            )
-            self.schedule.add(agent=grass)
-            self.grid.place_agent(agent=grass, pos=(grass_id % width, grass_id // width))
 
     def step(self):
         """Actions executed by the model during one step of the simulation."""
