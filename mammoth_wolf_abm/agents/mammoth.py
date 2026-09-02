@@ -81,6 +81,8 @@ class MammothAgent(Agent):
             if isinstance(agent, GrassAgent) and agent.grown:
                 self.ep = self.ep_gain
                 agent.grown = False
+                if self.model.random.random() < 0.5:
+                    agent.boosted = True
 
     def destroy(self):
         """Implement removal of the agent."""
