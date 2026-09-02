@@ -130,6 +130,11 @@ class MammothAgent(Agent):
                 gestation_period=self.gestation_period//30,
                 birth_interval=self.birth_interval//30
             )
+            child.age = 0
+            child.ep = child.ep_gain
+            child.gestation = 0
+            child.is_gestating = False
+            child.interbirth = 0
             cells_to_move = self.get_free_cells()
             dest_cell = self.model.random.choice(seq=cells_to_move)
             self.model.place_agent(agent=child, pos=dest_cell)
