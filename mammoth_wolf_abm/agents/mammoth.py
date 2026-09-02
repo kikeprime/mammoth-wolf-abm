@@ -53,12 +53,13 @@ class MammothAgent(Agent):
         self.move()
         self.ep -= 1
         self.eat()
+        self.reproduce()
         self.age += 1
         if self.age >= self.max_age or self.ep <= 0:
             self.destroy()
 
-    def move(self):
-        """Implement movement of the agent."""
+    def get_free_cells(self) -> list:
+        """Get the list of the free neighboring cells."""
         self.model: abm.MammothWolfModel
         cells = self.model.grid.get_neighborhood(
             pos=self.pos,
@@ -66,10 +67,16 @@ class MammothAgent(Agent):
             include_center=False,
             radius=1
         )
-        cells_to_move = []
+        free_cells = []
         for cell in cells:
             if len(self.model.grid.get_cell_list_contents(cell)) == 1:
-                cells_to_move.append(cell)
+                free_cells.append(cell)
+        return free_cells
+
+    def move(self):
+        """Implement movement of the agent."""
+        self.model: abm.MammothWolfModel
+        cells_to_move = self.get_free_cells()
         if len(cells_to_move) > 0:
             dest_cell = self.model.random.choice(seq=cells_to_move)
             self.model.grid.move_agent(agent=self, pos=dest_cell)
@@ -83,6 +90,10 @@ class MammothAgent(Agent):
                 agent.grown = False
                 if self.model.random.random() < 0.5:
                     agent.boosted = True
+
+    def reproduce(self):
+        """Implement reproduction of the agent."""
+        pass
 
     def destroy(self):
         """Implement removal of the agent."""
