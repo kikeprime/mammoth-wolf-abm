@@ -1,9 +1,20 @@
+from dataclasses import asdict, dataclass
 from importlib.metadata import version
 
 from .grass import GrassAgent
 import mammoth_wolf_abm.model as abm
 from mesa.agent import Agent
 from mesa.model import Model
+
+
+@dataclass
+class MammothData:
+    ep_gain: int
+    max_age: int
+    reproductive_age: int
+    gestation_period: int
+    birth_interval: int
+    is_child: bool
 
 
 class MammothAgent(Agent):
@@ -19,14 +30,15 @@ class MammothAgent(Agent):
         birth_interval (int): birth_interval in months
     """
     def __init__(
-            self,
-            unique_id: int,
-            model: Model,
-            ep_gain: int,
-            max_age: int,
-            reproductive_age: int,
-            gestation_period: int,
-            birth_interval: int
+        self,
+        unique_id: int,
+        model: Model,
+        ep_gain: int,
+        max_age: int,
+        reproductive_age: int,
+        gestation_period: int,
+        birth_interval: int,
+        is_child: bool,
     ):
         if version("mesa") == "2.4.0":
             super().__init__(unique_id=unique_id, model=model)
@@ -43,20 +55,36 @@ class MammothAgent(Agent):
         self.reproductive_age = reproductive_age * 365
         self.gestation_period = gestation_period * 30
         self.birth_interval = birth_interval * 30
+        self.child_data = MammothData(
+            ep_gain,
+            max_age,
+            reproductive_age,
+            gestation_period,
+            birth_interval,
+            True
+        )
 
         self.race = 1
-        self.age = self.model.random.randint(a=0, b=self.max_age)
-        self.ep = self.model.random.randint(a=1, b=self.ep_gain)
-        self.gestation = 0
-        self.is_gestating = False
-        self.interbirth = 0
 
-        if self.age >= self.reproductive_age:
-            self.gestation = self.model.random.randint(a=0, b=self.gestation_period)
-            if self.gestation == 0:
-                self.interbirth = self.model.random.randint(a=0, b=self.birth_interval)
-            else:
-                self.is_gestating = True
+        if not is_child:
+            self.age = self.model.random.randint(a=0, b=self.max_age)
+            self.ep = self.model.random.randint(a=1, b=self.ep_gain)
+            self.gestation = 0
+            self.is_gestating = False
+            self.interbirth = 0
+
+            if self.age >= self.reproductive_age:
+                self.gestation = self.model.random.randint(a=0, b=self.gestation_period)
+                if self.gestation == 0:
+                    self.interbirth = self.model.random.randint(a=0, b=self.birth_interval)
+                else:
+                    self.is_gestating = True
+        else:
+            self.age = 0
+            self.ep = self.ep_gain
+            self.gestation = 0
+            self.is_gestating = False
+            self.interbirth = 0
 
     def step(self):
         """Actions of the agent during one step of the simulation."""
@@ -124,17 +152,8 @@ class MammothAgent(Agent):
             child = MammothAgent(
                 unique_id=self.model.next_id(),
                 model=self.model,
-                ep_gain=self.ep_gain,
-                max_age=self.max_age//365,
-                reproductive_age=self.reproductive_age//365,
-                gestation_period=self.gestation_period//30,
-                birth_interval=self.birth_interval//30
+                **asdict(self.child_data)
             )
-            child.age = 0
-            child.ep = child.ep_gain
-            child.gestation = 0
-            child.is_gestating = False
-            child.interbirth = 0
             cells_to_move = self.get_free_cells()
             dest_cell = self.model.random.choice(seq=cells_to_move)
             self.model.place_agent(agent=child, pos=dest_cell)

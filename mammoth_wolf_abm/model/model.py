@@ -1,9 +1,11 @@
+from dataclasses import asdict
+
 from mesa.datacollection import DataCollector
 from mesa.model import Model
 from mesa.space import MultiGrid
 from mesa.time import RandomActivation
 
-from mammoth_wolf_abm.agents import GrassAgent, MammothAgent
+from mammoth_wolf_abm.agents import GrassAgent, MammothAgent, MammothData
 
 
 class MammothWolfModel(Model):
@@ -35,6 +37,18 @@ class MammothWolfModel(Model):
         random_seed: int,
     ):
         super().__init__()
+        self.width = width
+        self.height = height
+        self.torus = torus
+        self.mammoth_data = MammothData(
+            ep_gain=mammoth_ep_gain,
+            max_age=mammoth_max_age,
+            reproductive_age=mammoth_reproductive_age,
+            gestation_period=mammoth_gestation_period,
+            birth_interval=mammoth_birth_interval,
+            is_child=False
+        )
+
         self.schedule = RandomActivation(model=self)
         self.grid = MultiGrid(width=width, height=height, torus=torus)
 
@@ -45,22 +59,12 @@ class MammothWolfModel(Model):
 
         # Adding grass
         self.initialize_grass_agents(
-            width=width,
-            height=height,
             grass_regrow_rate=grass_regrow_rate,
             grass_regrow_rate_boosted=grass_regrow_rate_boosted
         )
 
         # Adding mammoths
-        self.initialize_mammoth_agents(
-            width=width,
-            height=height,
-            mammoth_ep_gain=mammoth_ep_gain,
-            mammoth_max_age=mammoth_max_age,
-            mammoth_reproductive_age=mammoth_reproductive_age,
-            mammoth_gestation_period=mammoth_gestation_period,
-            mammoth_birth_interval=mammoth_birth_interval
-        )
+        self.initialize_mammoth_agents()
 
         self.datacollector = DataCollector(
             model_reporters={
@@ -72,19 +76,15 @@ class MammothWolfModel(Model):
 
     def initialize_grass_agents(
             self,
-            width: int,
-            height: int,
             grass_regrow_rate: float,
             grass_regrow_rate_boosted: float
     ):
         """
         Fill all cells with grass agents.
-        :param int width: Width of the grid
-        :param int height: height of the grid
         :param float grass_regrow_rate: Probability for a grazed cell to become grown grass
         :param float grass_regrow_rate_boosted: Probability for a grazed cell to become grown grass
         """
-        for grass_id in range(width * height):
+        for grass_id in range(self.width * self.height):
             grass = GrassAgent(
                 unique_id=self.next_id(),
                 model=self,
@@ -92,30 +92,18 @@ class MammothWolfModel(Model):
                 grass_regrow_rate_boosted=grass_regrow_rate_boosted / 100.0,
             )
             self.schedule.add(agent=grass)
-            self.grid.place_agent(agent=grass, pos=(grass_id % width, grass_id // width))
+            self.grid.place_agent(agent=grass, pos=(grass_id % self.width, grass_id // self.width))
 
-    def initialize_mammoth_agents(
-        self,
-        width: int,
-        height: int,
-        mammoth_ep_gain: int,
-        mammoth_max_age: int,
-        mammoth_reproductive_age: int,
-        mammoth_gestation_period: int,
-        mammoth_birth_interval: int
-    ):
+    def initialize_mammoth_agents(self):
+        """Generate and place the initial mammoth agents."""
         for i in range(self.n_mammoth):
             mammoth = MammothAgent(
                 unique_id=self.next_id(),
                 model=self,
-                ep_gain=mammoth_ep_gain,
-                max_age=mammoth_max_age,
-                reproductive_age=mammoth_reproductive_age,
-                gestation_period=mammoth_gestation_period,
-                birth_interval=mammoth_birth_interval
+                **asdict(self.mammoth_data)
             )
-            x = self.random.randrange(width)
-            y = self.random.randrange(height)
+            x = self.random.randrange(self.width)
+            y = self.random.randrange(self.height)
             self.place_agent(agent=mammoth, pos=(x, y))
 
     def step(self):
@@ -124,6 +112,7 @@ class MammothWolfModel(Model):
         self.datacollector.collect(model=self)
 
     def place_agent(self, agent, pos):
+        """Place an agent."""
         self.schedule.add(agent=agent)
         self.grid.place_agent(agent=agent, pos=pos)
 
