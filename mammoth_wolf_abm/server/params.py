@@ -1,10 +1,17 @@
 import json5
 import sys
 
-from mammoth_wolf_abm.agents import GrassAgent
+from mammoth_wolf_abm.agents import GrassAgent, MammothAgent
 from mesa.agent import Agent
 from mesa_viz_tornado.modules import CanvasGrid, ChartModule
 from mesa_viz_tornado.UserParam import *
+
+
+def days_to_years(days):
+    y = days // 365
+    m = (days % 365) // 30
+    d = (days % 365) % 30
+    return f"{y} years, {m} months, {d} days"
 
 
 def mw_model_portrayal(agent: Agent) -> dict | None:
@@ -30,6 +37,15 @@ def mw_model_portrayal(agent: Agent) -> dict | None:
         portrayal["Layer"] = 0
         portrayal["w"] = 1
         portrayal["h"] = 1
+
+    # Mammoth portrayal
+    if isinstance(agent, MammothAgent):
+        portrayal["Shape"] = "pics/mammoth.png"
+        portrayal["Layer"] = 1
+        portrayal["Age"] = days_to_years(agent.age)
+        portrayal["Gestation"] = days_to_years(agent.gestation)
+        portrayal["Interbirth"] = days_to_years(agent.interbirth)
+        portrayal["EP"] = agent.energy
 
     return portrayal
 
