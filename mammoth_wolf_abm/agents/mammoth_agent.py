@@ -57,26 +57,29 @@ class MammothAgent(Agent):
         )
 
         self.race = 1
+        self.age = 0
+        self.ep = self.ep_gain
+        self.gestation = 0
+        self.is_gestating = False
+        self.interbirth = 0
 
         if not is_child:
-            self.age = self.model.random.randint(a=0, b=self.max_age)
-            self.ep = self.model.random.randint(a=1, b=self.ep_gain)
-            self.gestation = 0
-            self.is_gestating = False
-            self.interbirth = 0
+            self.init_random_mammoths()
 
-            if self.age >= self.reproductive_age:
-                self.gestation = self.model.random.randint(a=0, b=self.gestation_period)
-                if self.gestation == 0:
-                    self.interbirth = self.model.random.randint(a=0, b=self.birth_interval)
-                else:
-                    self.is_gestating = True
-        else:
-            self.age = 0
-            self.ep = self.ep_gain
-            self.gestation = 0
-            self.is_gestating = False
-            self.interbirth = 0
+    def init_random_mammoths(self):
+        """Initialize the attributes of the randomly generated specimens."""
+        self.age = self.model.random.randint(a=0, b=self.max_age)
+        self.ep = self.model.random.randint(a=1, b=self.ep_gain)
+        self.gestation = 0
+        self.is_gestating = False
+        self.interbirth = 0
+
+        if self.age >= self.reproductive_age:
+            self.gestation = self.model.random.randint(a=0, b=self.gestation_period)
+            if self.gestation == 0:
+                self.interbirth = self.model.random.randint(a=0, b=self.birth_interval)
+            else:
+                self.is_gestating = True
 
     def step(self):
         """Actions of the agent during one step of the simulation."""
