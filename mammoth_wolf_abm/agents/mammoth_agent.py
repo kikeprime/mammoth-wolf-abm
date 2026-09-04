@@ -1,20 +1,11 @@
-from dataclasses import asdict, dataclass
+from dataclasses import asdict
 from importlib.metadata import version
 
 from .grass import GrassAgent
+from .mammoth_data import MammothData
 import mammoth_wolf_abm.model as abm
 from mesa.agent import Agent
 from mesa.model import Model
-
-
-@dataclass
-class MammothData:
-    ep_gain: int
-    max_age: int
-    reproductive_age: int
-    gestation_period: int
-    birth_interval: int
-    is_child: bool
 
 
 class MammothAgent(Agent):
@@ -28,6 +19,7 @@ class MammothAgent(Agent):
         reproductive_age (int): minimum age allowed for reproduction in years
         gestation_period (int): gestation period in months
         birth_interval (int): birth_interval in months
+        is_child (bool): whether the agent is child or not
     """
     def __init__(
         self,
@@ -56,12 +48,12 @@ class MammothAgent(Agent):
         self.gestation_period = gestation_period * 30
         self.birth_interval = birth_interval * 30
         self.child_data = MammothData(
-            ep_gain,
-            max_age,
-            reproductive_age,
-            gestation_period,
-            birth_interval,
-            True
+            ep_gain=ep_gain,
+            max_age=max_age,
+            reproductive_age=reproductive_age,
+            gestation_period=gestation_period,
+            birth_interval=birth_interval,
+            is_child=True
         )
 
         self.race = 1
@@ -94,7 +86,7 @@ class MammothAgent(Agent):
         self.reproduce()
         self.age += 1
         if self.age >= self.max_age or self.ep <= 0:
-            self.destroy()
+            self.die()
 
     def get_free_cells(self) -> list:
         """Get the list of the free neighboring cells."""
@@ -130,13 +122,17 @@ class MammothAgent(Agent):
                     agent.boosted = True
 
     def can_gestate(self) -> bool:
-        """Returns true if the agent can reproduce."""
+        """Returns true if the agent can enter gestation.
+        :returns bool: True if the agent can enter gestation else False.
+        """
         age = self.age >= self.reproductive_age
         interbirth = self.interbirth <= 0
         return age and not self.is_gestating and interbirth
 
     def can_reproduce(self) -> bool:
-        """Returns true if the agent can reproduce."""
+        """Returns true if the agent can reproduce.
+        :returns bool: True if the agent can give birth False.
+        """
         age = self.age >= self.reproductive_age
         gestation = self.gestation <= 0
         cell = len(self.get_free_cells()) > 0
@@ -144,9 +140,13 @@ class MammothAgent(Agent):
 
     def reproduce(self):
         """Handle reproduction of the agent."""
+        # Make the agent enter gestation if possible.
         if self.can_gestate():
             self.gestation = self.gestation_period
             self.is_gestating = True
+        # If the reason it can't gestate is
+        # being due to give birth
+        # then it will give birth.
         elif self.can_reproduce():
             self.model: abm.MammothWolfModel
             child = MammothAgent(
@@ -159,12 +159,14 @@ class MammothAgent(Agent):
             self.model.place_agent(agent=child, pos=dest_cell)
             self.is_gestating = False
             self.interbirth = self.birth_interval
+        # If the agent is gestating progress it.
         elif self.gestation > 0:
             self.gestation -= 1
+        # If the agent is between giving births progress the interbirth period.
         elif self.interbirth > 0:
             self.interbirth -= 1
 
-    def destroy(self):
+    def die(self):
         """Implement removal of the agent."""
         self.model: abm.MammothWolfModel
         self.model.grid.remove_agent(agent=self)

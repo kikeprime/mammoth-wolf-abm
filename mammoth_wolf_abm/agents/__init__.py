@@ -1,2 +1,3 @@
 from .grass import GrassAgent
-from .mammoth import MammothAgent, MammothData
+from .mammoth_agent import MammothAgent
+from .mammoth_data import MammothData

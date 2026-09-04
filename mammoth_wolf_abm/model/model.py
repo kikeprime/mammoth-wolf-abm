@@ -68,8 +68,8 @@ class MammothWolfModel(Model):
 
         self.datacollector = DataCollector(
             model_reporters={
-                "Ratio of grass patches (%)": grass_cell_counter,
-                "Number of mammoths": mammoth_counter,
+                "Ratio of grass patches (%)": count_grass_cells,
+                "Number of mammoths": count_mammoths,
             }
         )
         self.datacollector.collect(model=self)
@@ -118,7 +118,7 @@ class MammothWolfModel(Model):
 
 
 # Agent counters
-def grass_cell_counter(model: MammothWolfModel) -> float:
+def count_grass_cells(model: MammothWolfModel) -> float:
     """
     Return percentage of grown grass.
     :param MammothWolfModel model: Model whose grass filled cells are counted
@@ -133,7 +133,7 @@ def grass_cell_counter(model: MammothWolfModel) -> float:
     return 100 * result / float(model.grid.width * model.grid.height)
 
 
-def mammoth_counter(model: MammothWolfModel) -> int:
+def count_mammoths(model: MammothWolfModel) -> int:
     """
     Return the number of mammoths.
     :param MammothWolfModel model: Model whose grass filled cells are counted
