@@ -45,7 +45,7 @@ def mw_model_portrayal(agent: Agent) -> dict | None:
         portrayal["Age"] = days_to_years(agent.age)
         portrayal["Gestation"] = days_to_years(agent.gestation)
         portrayal["Interbirth"] = days_to_years(agent.interbirth)
-        portrayal["EP"] = agent.ep
+        portrayal["EP"] = agent.energy
 
     return portrayal
 

@@ -58,7 +58,7 @@ class MammothAgent(Agent):
 
         self.race = 1
         self.age = 0
-        self.ep = self.ep_gain
+        self.energy = self.ep_gain
         self.gestation = 0
         self.is_gestating = False
         self.interbirth = 0
@@ -69,7 +69,7 @@ class MammothAgent(Agent):
     def init_random_mammoths(self):
         """Initialize the attributes of the randomly generated specimens."""
         self.age = self.model.random.randint(a=0, b=self.max_age)
-        self.ep = self.model.random.randint(a=1, b=self.ep_gain)
+        self.energy = self.model.random.randint(a=1, b=self.ep_gain)
         self.gestation = 0
         self.is_gestating = False
         self.interbirth = 0
@@ -83,16 +83,23 @@ class MammothAgent(Agent):
 
     def step(self):
         """Actions of the agent during one step of the simulation."""
+        # Step 1: Move to a neighboring cell.
         self.move()
-        self.ep -= 1
+        # Step 2: Exhaust the agent. Currently, it decreases energy.
+        self.exhaust()
+        # Step 3: Eating.
         self.eat()
+        # Step 4: Reproductive functions.
         self.reproduce()
-        self.age += 1
-        if self.age >= self.max_age or self.ep <= 0:
-            self.die()
+        # Step 5: Aging.
+        self.aging()
+        # Step 6: Check natural death and starvation.
+        self.check_death()
 
     def get_free_cells(self) -> list:
-        """Get the list of the free neighboring cells."""
+        """Get the list of the free neighboring cells.
+        :returns list: List of free neighboring cells
+        """
         self.model: abm.MammothWolfModel
         cells = self.model.grid.get_neighborhood(
             pos=self.pos,
@@ -114,12 +121,16 @@ class MammothAgent(Agent):
             dest_cell = self.model.random.choice(seq=cells_to_move)
             self.model.grid.move_agent(agent=self, pos=dest_cell)
 
+    def exhaust(self):
+        """Implement exhaustion of the agent."""
+        self.energy -= 1
+
     def eat(self):
         """Implement eating of the agent."""
         self.model: abm.MammothWolfModel
         for agent in self.model.grid.get_cell_list_contents([self.pos]):
             if isinstance(agent, GrassAgent) and agent.grown:
-                self.ep = self.ep_gain
+                self.energy = self.ep_gain
                 agent.grown = False
                 if self.model.random.random() < 0.5:
                     agent.boosted = True
@@ -168,6 +179,15 @@ class MammothAgent(Agent):
         # If the agent is between giving births progress the interbirth period.
         elif self.interbirth > 0:
             self.interbirth -= 1
+
+    def aging(self):
+        """Handle aging of the agent."""
+        self.age += 1
+
+    def check_death(self):
+        """Check whether the agent should die either naturally or due to starvation."""
+        if self.age >= self.max_age or self.energy <= 0:
+            self.die()
 
     def die(self):
         """Implement removal of the agent."""
