@@ -1,5 +1,6 @@
 from importlib.metadata import version
 
+from .mammoth_agent import MammothAgent
 from .dire_wolf_data import DireWolfData
 import mammoth_wolf_abm.model as abm
 from mesa.agent import Agent
@@ -17,6 +18,7 @@ class DireWolfAgent(Agent):
         reproductive_age (int): minimum age allowed for reproduction in years
         gestation_period (int): gestation period in months
         birth_interval (int): birth_interval in months
+        hunt_success_rate (float): Probability of successful hunt in percentage
         is_child (bool): whether the agent is child or not
     """
     def __init__(
@@ -28,6 +30,7 @@ class DireWolfAgent(Agent):
         reproductive_age: int,
         gestation_period: int,
         birth_interval: int,
+        hunt_success_rate: float,
         is_child: bool,
     ):
         if version("mesa") == "2.4.0":
@@ -45,12 +48,14 @@ class DireWolfAgent(Agent):
         self.reproductive_age = reproductive_age * 365
         self.gestation_period = gestation_period * 30
         self.birth_interval = birth_interval * 30
+        self.hunt_success_rate = hunt_success_rate / 100
         self.child_data = DireWolfData(
             ep_gain=ep_gain,
             max_age=max_age,
             reproductive_age=reproductive_age,
             gestation_period=gestation_period,
             birth_interval=birth_interval,
+            hunt_success_rate=hunt_success_rate,
             is_child=True
         )
 
@@ -111,9 +116,36 @@ class DireWolfAgent(Agent):
                 free_cells.append(cell)
         return free_cells
 
+    def get_dest_cells(self) -> tuple[list, list]:
+        """Get the list of the possible destination cells.
+        :returns tuple[list, list]: tuple of lists with possible destination cells and cells with a mammoth
+        """
+        self.model: abm.MammothWolfModel
+        cells = self.model.grid.get_neighborhood(
+            pos=self.pos,
+            moore=True,
+            include_center=False,
+            radius=1
+        )
+        dest_cells = []
+        cells_with_mammoth = []
+        for cell in cells:
+            contents = self.model.grid.get_cell_list_contents(cell)
+            if len(contents) == 1:
+                dest_cells.append(cell)
+            if len(contents) == 2 and isinstance(contents[1], MammothAgent):
+                dest_cells.append(cell)
+                cells_with_mammoth.append(cell)
+        return dest_cells, cells_with_mammoth
+
     def move(self):
         """Implement movement of the agent."""
-        pass
+        self.model: abm.MammothWolfModel
+        cells_to_move, cells_with_mammoth = self.get_dest_cells()
+        # directed movement will be here using cells_with_mammoth
+        if len(cells_to_move) > 0:
+            dest_cell = self.model.random.choice(seq=cells_to_move)
+            self.model.grid.move_agent(agent=self, pos=dest_cell)
 
     def exhaust(self):
         """Implement exhaustion of the agent."""
@@ -121,7 +153,13 @@ class DireWolfAgent(Agent):
 
     def eat(self):
         """Implement eating of the agent."""
-        pass
+        self.model: abm.MammothWolfModel
+        contents = self.model.grid.get_cell_list_contents(self.pos)
+        for agent in contents:
+            if isinstance(agent, MammothAgent):
+                if self.model.random.random() < self.hunt_success_rate:
+                    agent.die()
+                    self.energy = self.ep_gain
 
     def can_gestate(self) -> bool:
         """Returns true if the agent can enter gestation.
