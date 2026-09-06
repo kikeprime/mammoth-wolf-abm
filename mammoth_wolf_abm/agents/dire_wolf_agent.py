@@ -142,8 +142,11 @@ class DireWolfAgent(Agent):
         """Implement movement of the agent."""
         self.model: abm.MammothWolfModel
         cells_to_move, cells_with_mammoth = self.get_dest_cells()
-        # directed movement will be here using cells_with_mammoth
-        if len(cells_to_move) > 0:
+        if len(cells_with_mammoth) > 0:
+            # Extra limits on hunting goes here.
+            dest_cell = self.model.random.choice(seq=cells_with_mammoth)
+            self.model.grid.move_agent(agent=self, pos=dest_cell)
+        elif len(cells_to_move) > 0:
             dest_cell = self.model.random.choice(seq=cells_to_move)
             self.model.grid.move_agent(agent=self, pos=dest_cell)
 
