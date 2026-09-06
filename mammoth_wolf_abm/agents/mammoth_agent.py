@@ -1,4 +1,3 @@
-from dataclasses import asdict
 from importlib.metadata import version
 
 from .grass import GrassAgent
@@ -166,7 +165,7 @@ class MammothAgent(Agent):
             child = MammothAgent(
                 unique_id=self.model.next_id(),
                 model=self.model,
-                **asdict(self.child_data)
+                **dict(self.child_data)
             )
             cells_to_move = self.get_free_cells()
             dest_cell = self.model.random.choice(seq=cells_to_move)

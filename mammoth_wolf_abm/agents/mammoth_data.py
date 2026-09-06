@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 
 @dataclass
@@ -18,3 +18,7 @@ class MammothData:
     gestation_period: int
     birth_interval: int
     is_child: bool
+
+    def __iter__(self):
+        """Allow dict to be used on this class' objects."""
+        yield from asdict(self).items()

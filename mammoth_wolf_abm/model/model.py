@@ -1,5 +1,3 @@
-from dataclasses import asdict
-
 from mesa.datacollection import DataCollector
 from mesa.model import Model
 from mesa.space import MultiGrid
@@ -100,7 +98,7 @@ class MammothWolfModel(Model):
             mammoth = MammothAgent(
                 unique_id=self.next_id(),
                 model=self,
-                **asdict(self.mammoth_data)
+                **dict(self.mammoth_data)
             )
             x = self.random.randrange(self.width)
             y = self.random.randrange(self.height)
