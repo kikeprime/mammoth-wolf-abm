@@ -54,7 +54,7 @@ class DireWolfAgent(Agent):
             is_child=True
         )
 
-        self.race = 1
+        self.race = 2
         self.age = 0
         self.energy = self.ep_gain
         self.gestation = 0
