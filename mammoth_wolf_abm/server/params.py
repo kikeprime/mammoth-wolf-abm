@@ -46,9 +46,9 @@ def mw_model_portrayal(agent: Agent) -> dict | None:
     if isinstance(agent, MammothAgent):
         portrayal["Shape"] = "pics/mammoth.png"
         portrayal["Layer"] = 1
-        portrayal["Age"] = days_to_years(agent.age)
-        portrayal["Gestation"] = days_to_years(agent.gestation)
-        portrayal["Interbirth"] = days_to_years(agent.interbirth)
+        portrayal["Age"] = days_to_years(days=agent.age)
+        portrayal["Gestation"] = days_to_years(days=agent.gestation)
+        portrayal["Interbirth"] = days_to_years(days=agent.interbirth)
         portrayal["EP"] = agent.energy
 
     return portrayal
