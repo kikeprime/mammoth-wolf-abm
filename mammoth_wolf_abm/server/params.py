@@ -7,7 +7,11 @@ from mesa_viz_tornado.modules import CanvasGrid, ChartModule
 from mesa_viz_tornado.UserParam import *
 
 
-def days_to_years(days):
+def days_to_years(days: int) -> str:
+    """Converts a number of days to a string of years, months, days.
+    :param int days: Number of days to convert
+    :returns str: String of years, months, days
+    """
     y = days // 365
     m = (days % 365) // 30
     d = (days % 365) % 30
