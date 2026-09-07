@@ -1,14 +1,12 @@
-from importlib.metadata import version
-
-from mesa.agent import Agent
 from mesa.model import Model
 
+from .animal_agent import AnimalAgent
 from .dire_wolf_data import DireWolfData
 from .mammoth_agent import MammothAgent
 import mammoth_wolf_abm.model as abm
 
 
-class DireWolfAgent(Agent):
+class DireWolfAgent(AnimalAgent):
     """Agent class for dire wolves.
 
     Parameters:
@@ -34,21 +32,17 @@ class DireWolfAgent(Agent):
         hunt_success_rate: float,
         is_child: bool,
     ):
-        if version("mesa") == "2.4.0":
-            super().__init__(unique_id=unique_id, model=model)
-        elif version("mesa") > "2.4.0":
-            super().__init__(model=model)
-        else:
-            try:
-                super().__init__(unique_id=unique_id, model=model)
-            except TypeError or AttributeError:
-                print("Incompatible mesa version.")
+        super().__init__(
+            unique_id=unique_id,
+            model=model,
+            ep_gain=ep_gain,
+            max_age=max_age,
+            reproductive_age=reproductive_age,
+            gestation_period=gestation_period,
+            birth_interval=birth_interval,
+            is_child=is_child
+        )
 
-        self.ep_gain = ep_gain
-        self.max_age = max_age * 365
-        self.reproductive_age = reproductive_age * 365
-        self.gestation_period = gestation_period * 30
-        self.birth_interval = birth_interval * 30
         self.hunt_success_rate = hunt_success_rate / 100
         self.child_data = DireWolfData(
             ep_gain=ep_gain,
@@ -59,46 +53,6 @@ class DireWolfAgent(Agent):
             hunt_success_rate=hunt_success_rate,
             is_child=True
         )
-
-        self.race = 2
-        self.age = 0
-        self.energy = self.ep_gain
-        self.gestation = 0
-        self.is_gestating = False
-        self.interbirth = 0
-
-        if not is_child:
-            self.init_random_wolves()
-
-    def init_random_wolves(self):
-        """Initialize the attributes of the randomly generated specimens."""
-        self.age = self.model.random.randint(a=0, b=self.max_age)
-        self.energy = self.model.random.randint(a=1, b=self.ep_gain)
-        self.gestation = 0
-        self.is_gestating = False
-        self.interbirth = 0
-
-        if self.age >= self.reproductive_age:
-            self.gestation = self.model.random.randint(a=0, b=self.gestation_period)
-            if self.gestation == 0:
-                self.interbirth = self.model.random.randint(a=0, b=self.birth_interval)
-            else:
-                self.is_gestating = True
-
-    def step(self):
-        """Actions of the agent during one step of the simulation."""
-        # Step 1: Move to a neighboring cell.
-        self.move()
-        # Step 2: Exhaust the agent. Currently, it decreases energy.
-        self.exhaust()
-        # Step 3: Eating.
-        self.eat()
-        # Step 4: Reproductive functions.
-        self.reproduce()
-        # Step 5: Aging.
-        self.aging()
-        # Step 6: Check natural death and starvation.
-        self.check_death()
 
     def move(self):
         """Implement movement of the agent."""
@@ -158,28 +112,6 @@ class DireWolfAgent(Agent):
         """Handle aging of the agent."""
         self.age += 1
 
-    def check_death(self):
-        """Check whether the agent should die either naturally or due to starvation."""
-        if self.age >= self.max_age or self.energy <= 0:
-            self.die()
-
-    def get_free_cells(self) -> list:
-        """Get the list of the free neighboring cells.
-        :returns list: List of free neighboring cells
-        """
-        self.model: abm.MammothWolfModel
-        cells = self.model.grid.get_neighborhood(
-            pos=self.pos,
-            moore=True,
-            include_center=False,
-            radius=1
-        )
-        free_cells = []
-        for cell in cells:
-            if len(self.model.grid.get_cell_list_contents(cell)) == 1:
-                free_cells.append(cell)
-        return free_cells
-
     def get_dest_cells(self) -> tuple[list, list]:
         """Get the list of the possible destination cells.
         :returns tuple[list, list]: tuple of lists with possible destination cells and cells with a mammoth
@@ -201,26 +133,3 @@ class DireWolfAgent(Agent):
                 dest_cells.append(cell)
                 cells_with_mammoth.append(cell)
         return dest_cells, cells_with_mammoth
-
-    def can_gestate(self) -> bool:
-        """Returns true if the agent can enter gestation.
-        :returns bool: True if the agent can enter gestation else False.
-        """
-        age = self.age >= self.reproductive_age
-        interbirth = self.interbirth <= 0
-        return age and not self.is_gestating and interbirth
-
-    def can_reproduce(self) -> bool:
-        """Returns true if the agent can reproduce.
-        :returns bool: True if the agent can give birth False.
-        """
-        age = self.age >= self.reproductive_age
-        gestation = self.gestation <= 0
-        cell = len(self.get_free_cells()) > 0
-        return age and gestation and self.is_gestating and cell
-
-    def die(self):
-        """Implement removal of the agent."""
-        self.model: abm.MammothWolfModel
-        self.model.grid.remove_agent(agent=self)
-        self.model.schedule.remove(agent=self)
