@@ -2,7 +2,7 @@ from mesa.model import Model
 
 from .animal_agent import AnimalAgent
 from .grass import GrassAgent
-from .mammoth_data import MammothData
+from .animal_data import AnimalData
 import mammoth_wolf_abm.model as abm
 
 
@@ -41,7 +41,7 @@ class MammothAgent(AnimalAgent):
             is_child=is_child
         )
 
-        self.child_data = MammothData(
+        self.child_data = AnimalData(
             ep_gain=ep_gain,
             max_age=max_age,
             reproductive_age=reproductive_age,
