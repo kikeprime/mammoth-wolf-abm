@@ -77,7 +77,7 @@ class DireWolfAgent(AnimalAgent):
         for agent in contents:
             if isinstance(agent, MammothAgent):
                 if self.model.random.random() < self.hunt_success_rate:
-                    agent.die()
+                    agent.energy = -2 * agent.ep_gain
                     self.energy = self.ep_gain
 
     def reproduce(self):
