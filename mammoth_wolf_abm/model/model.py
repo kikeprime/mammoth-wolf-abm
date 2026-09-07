@@ -3,7 +3,7 @@ from mesa.model import Model
 from mesa.space import MultiGrid
 from mesa.time import RandomActivation
 
-from mammoth_wolf_abm.agents import AnimalData, GrassAgent, MammothAgent
+from mammoth_wolf_abm.agents import AnimalData, DireWolfAgent, DireWolfData, GrassAgent, MammothAgent
 import mammoth_wolf_abm.utils.counters as counters
 
 
@@ -13,9 +13,23 @@ class MammothWolfModel(Model):
 
     Parameters:
         width (int): Width of the grid
-        height (int): height of the grid
+        height (int): Height of the grid
+        torus (bool): Whether the grid is torus or not
+        n_mammoth (int): Initial number of woolly mammoths
+        n_dire_wolf (int): Initial number of dire wolves
         grass_regrow_rate (float): Probability for a grazed cell to become grown grass
         grass_regrow_rate_boosted (float): Probability for a grazed cell to become grown grass if boosted by mammoths
+        mammoth_ep_gain (int): energy point gained from eating for mammoths
+        mammoth_max_age (int): maximum age allowed for this agent in years for mammoths
+        mammoth_reproductive_age (int): minimum age allowed for reproduction in years for mammoths
+        mammoth_gestation_period (int): gestation period in months for mammoths
+        mammoth_birth_interval (int): birth_interval in months for mammoths
+        dire_wolf_ep_gain (int): energy point gained from eating for dire wolves
+        dire_wolf_max_age (int): maximum age allowed for this agent in years for dire wolves
+        dire_wolf_reproductive_age (int): minimum age allowed for reproduction in years for dire wolves
+        dire_wolf_gestation_period (int): gestation period in months for dire wolves
+        dire_wolf_birth_interval (int): birth_interval in months for dire wolves
+        dire_wolf_hunt_success_rate (float): Probability of successful hunt in percentage for dire wolves
         allow_seed (bool): Toggle random seed
         random_seed (int): Random seed
     """
@@ -25,6 +39,7 @@ class MammothWolfModel(Model):
         height: int,
         torus: bool,
         n_mammoth: int,
+        n_dire_wolf: int,
         grass_regrow_rate: float,
         grass_regrow_rate_boosted: float,
         mammoth_ep_gain: int,
@@ -32,6 +47,12 @@ class MammothWolfModel(Model):
         mammoth_reproductive_age: int,
         mammoth_gestation_period: int,
         mammoth_birth_interval: int,
+        dire_wolf_ep_gain: int,
+        dire_wolf_max_age: int,
+        dire_wolf_reproductive_age: int,
+        dire_wolf_gestation_period: int,
+        dire_wolf_birth_interval: int,
+        dire_wolf_hunt_success_rate: float,
         allow_seed: bool,
         random_seed: int,
     ):
@@ -39,6 +60,7 @@ class MammothWolfModel(Model):
         self.width = width
         self.height = height
         self.torus = torus
+
         self.mammoth_data = AnimalData(
             ep_gain=mammoth_ep_gain,
             max_age=mammoth_max_age,
@@ -47,11 +69,21 @@ class MammothWolfModel(Model):
             birth_interval=mammoth_birth_interval,
             is_child=False
         )
+        self.dire_wolf_data = DireWolfData(
+            ep_gain=dire_wolf_ep_gain,
+            max_age=dire_wolf_max_age,
+            reproductive_age=dire_wolf_reproductive_age,
+            gestation_period=dire_wolf_gestation_period,
+            birth_interval=dire_wolf_birth_interval,
+            hunt_success_rate=dire_wolf_hunt_success_rate,
+            is_child=False
+        )
 
         self.schedule = RandomActivation(model=self)
         self.grid = MultiGrid(width=width, height=height, torus=torus)
 
         self.n_mammoth = n_mammoth
+        self.n_dire_wolf = n_dire_wolf
 
         if allow_seed:
             self.random.seed(a=random_seed)
@@ -62,13 +94,15 @@ class MammothWolfModel(Model):
             grass_regrow_rate_boosted=grass_regrow_rate_boosted
         )
 
-        # Adding mammoths
+        # Adding mammoths and dire wolves
         self.initialize_mammoth_agents()
+        self.initialize_dire_wolf_agents()
 
         self.datacollector = DataCollector(
             model_reporters={
                 "Ratio of grass patches (%)": counters.count_grass_cells,
                 "Number of mammoths": counters.count_mammoths,
+                "Number of dire wolves": counters.count_dire_wolves,
             }
         )
         self.datacollector.collect(model=self)
@@ -104,6 +138,18 @@ class MammothWolfModel(Model):
             x = self.random.randrange(self.width)
             y = self.random.randrange(self.height)
             self.place_agent(agent=mammoth, pos=(x, y))
+
+    def initialize_dire_wolf_agents(self):
+        """Generate and place the initial dire wolf agents."""
+        for i in range(self.n_dire_wolf):
+            dire_wolf = DireWolfAgent(
+                unique_id=self.next_id(),
+                model=self,
+                **dict(self.dire_wolf_data)
+            )
+            x = self.random.randrange(self.width)
+            y = self.random.randrange(self.height)
+            self.place_agent(agent=dire_wolf, pos=(x, y))
 
     def step(self):
         """Actions executed by the model during one step of the simulation."""
