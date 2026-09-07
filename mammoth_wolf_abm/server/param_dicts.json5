@@ -17,7 +17,7 @@
             "type": "Checkbox",
             "params": {
                 name: "Torus",
-                value: true,
+                value: false,
                 description: "Whether the edges are connected or not.",
             },
         },
@@ -115,7 +115,7 @@
             "type": "Slider",
             "params": {
                 "name": "EP gain for dire wolves",
-                "value": 5,
+                "value": 14,
                 "min_value": 1,
                 "max_value": 100,
                 "step": 1,
@@ -125,7 +125,7 @@
             "type": "Slider",
             "params": {
                 "name": "Maximum age of dire wolves (years)",
-                "value": 60,
+                "value": 8,
                 "min_value": 1,
                 "max_value": 100,
                 "step": 1,
@@ -135,17 +135,17 @@
             "type": "Slider",
             "params": {
                 "name": "Minimum age for reproduction for dire wolves (years)",
-                "value": 9,
+                "value": 1.5, // 18 months
                 "min_value": 1,
                 "max_value": 100,
-                "step": 1,
+                "step": 1e-1,
             },
         },
         "dire_wolf_gestation_period": {
             "type": "Slider",
             "params": {
                 "name": "Gestation period of dire wolves (months)",
-                "value": 22,
+                "value": 2, // 63 days
                 "min_value": 0,
                 "max_value": 100,
                 "step": 1,
@@ -155,7 +155,7 @@
             "type": "Slider",
             "params": {
                 "name": "Birth interval of dire wolves (months)",
-                "value": 54,
+                "value": 10, // they give birth annually
                 "min_value": 0,
                 "max_value": 100,
                 "step": 1,
@@ -165,7 +165,7 @@
             "type": "Slider",
             "params": {
                 "name": "Possibility of successful hunt for dire wolves (%)",
-                "value": 14.29,
+                "value": 14.29, // 1 / 7
                 "min_value": 0,
                 "max_value": 100,
                 "step": 1e-2,

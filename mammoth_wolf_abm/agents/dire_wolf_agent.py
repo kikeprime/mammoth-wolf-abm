@@ -14,7 +14,7 @@ class DireWolfAgent(AnimalAgent):
         model (MammothWolfModel): the MammothWolf model
         ep_gain (int): energy point gained from eating
         max_age (int): maximum age allowed for this agent in years
-        reproductive_age (int): minimum age allowed for reproduction in years
+        reproductive_age (float): minimum age allowed for reproduction in years
         gestation_period (int): gestation period in months
         birth_interval (int): birth_interval in months
         hunt_success_rate (float): Probability of successful hunt in percentage
@@ -26,7 +26,7 @@ class DireWolfAgent(AnimalAgent):
         model: Model,
         ep_gain: int,
         max_age: int,
-        reproductive_age: int,
+        reproductive_age: float,
         gestation_period: int,
         birth_interval: int,
         hunt_success_rate: float,

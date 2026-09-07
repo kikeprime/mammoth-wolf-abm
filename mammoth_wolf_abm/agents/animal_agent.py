@@ -15,7 +15,7 @@ class AnimalAgent(ABC, Agent):
         model: Model,
         ep_gain: int,
         max_age: int,
-        reproductive_age: int,
+        reproductive_age: float,
         gestation_period: int,
         birth_interval: int,
         is_child: bool,
@@ -32,7 +32,7 @@ class AnimalAgent(ABC, Agent):
 
         self.ep_gain = ep_gain
         self.max_age = max_age * 365
-        self.reproductive_age = reproductive_age * 365
+        self.reproductive_age = int(reproductive_age * 365)
         self.gestation_period = gestation_period * 30
         self.birth_interval = birth_interval * 30
         self.child_data = AnimalData(
