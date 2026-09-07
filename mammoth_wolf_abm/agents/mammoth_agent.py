@@ -1,10 +1,11 @@
 from importlib.metadata import version
 
+from mesa.agent import Agent
+from mesa.model import Model
+
 from .grass import GrassAgent
 from .mammoth_data import MammothData
 import mammoth_wolf_abm.model as abm
-from mesa.agent import Agent
-from mesa.model import Model
 
 
 class MammothAgent(Agent):
@@ -95,23 +96,6 @@ class MammothAgent(Agent):
         # Step 6: Check natural death and starvation.
         self.check_death()
 
-    def get_free_cells(self) -> list:
-        """Get the list of the free neighboring cells.
-        :returns list: List of free neighboring cells
-        """
-        self.model: abm.MammothWolfModel
-        cells = self.model.grid.get_neighborhood(
-            pos=self.pos,
-            moore=True,
-            include_center=False,
-            radius=1
-        )
-        free_cells = []
-        for cell in cells:
-            if len(self.model.grid.get_cell_list_contents(cell)) == 1:
-                free_cells.append(cell)
-        return free_cells
-
     def move(self):
         """Implement movement of the agent."""
         self.model: abm.MammothWolfModel
@@ -133,23 +117,6 @@ class MammothAgent(Agent):
                 agent.grown = False
                 if self.model.random.random() < 0.5:
                     agent.boosted = True
-
-    def can_gestate(self) -> bool:
-        """Returns true if the agent can enter gestation.
-        :returns bool: True if the agent can enter gestation else False.
-        """
-        age = self.age >= self.reproductive_age
-        interbirth = self.interbirth <= 0
-        return age and not self.is_gestating and interbirth
-
-    def can_reproduce(self) -> bool:
-        """Returns true if the agent can reproduce.
-        :returns bool: True if the agent can give birth False.
-        """
-        age = self.age >= self.reproductive_age
-        gestation = self.gestation <= 0
-        cell = len(self.get_free_cells()) > 0
-        return age and gestation and self.is_gestating and cell
 
     def reproduce(self):
         """Handle reproduction of the agent."""
@@ -187,6 +154,40 @@ class MammothAgent(Agent):
         """Check whether the agent should die either naturally or due to starvation."""
         if self.age >= self.max_age or self.energy <= 0:
             self.die()
+
+    def get_free_cells(self) -> list:
+        """Get the list of the free neighboring cells.
+        :returns list: List of free neighboring cells
+        """
+        self.model: abm.MammothWolfModel
+        cells = self.model.grid.get_neighborhood(
+            pos=self.pos,
+            moore=True,
+            include_center=False,
+            radius=1
+        )
+        free_cells = []
+        for cell in cells:
+            if len(self.model.grid.get_cell_list_contents(cell)) == 1:
+                free_cells.append(cell)
+        return free_cells
+
+    def can_gestate(self) -> bool:
+        """Returns true if the agent can enter gestation.
+        :returns bool: True if the agent can enter gestation else False.
+        """
+        age = self.age >= self.reproductive_age
+        interbirth = self.interbirth <= 0
+        return age and not self.is_gestating and interbirth
+
+    def can_reproduce(self) -> bool:
+        """Returns true if the agent can reproduce.
+        :returns bool: True if the agent can give birth False.
+        """
+        age = self.age >= self.reproductive_age
+        gestation = self.gestation <= 0
+        cell = len(self.get_free_cells()) > 0
+        return age and gestation and self.is_gestating and cell
 
     def die(self):
         """Implement removal of the agent."""
