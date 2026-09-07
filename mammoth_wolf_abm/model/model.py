@@ -4,6 +4,7 @@ from mesa.space import MultiGrid
 from mesa.time import RandomActivation
 
 from mammoth_wolf_abm.agents import GrassAgent, MammothAgent, MammothData
+import mammoth_wolf_abm.utils.counters as counters
 
 
 class MammothWolfModel(Model):
@@ -66,8 +67,8 @@ class MammothWolfModel(Model):
 
         self.datacollector = DataCollector(
             model_reporters={
-                "Ratio of grass patches (%)": count_grass_cells,
-                "Number of mammoths": count_mammoths,
+                "Ratio of grass patches (%)": counters.count_grass_cells,
+                "Number of mammoths": counters.count_mammoths,
             }
         )
         self.datacollector.collect(model=self)
@@ -113,32 +114,3 @@ class MammothWolfModel(Model):
         """Place an agent."""
         self.schedule.add(agent=agent)
         self.grid.place_agent(agent=agent, pos=pos)
-
-
-# Agent counters
-def count_grass_cells(model: MammothWolfModel) -> float:
-    """
-    Return percentage of grown grass.
-    :param MammothWolfModel model: Model whose grass filled cells are counted
-    :returns float: Percentage of cells filled with grass
-    """
-    result = 0
-    for agent in model.schedule.agents:
-        if isinstance(agent, GrassAgent):
-            agent: GrassAgent
-            if agent.grown:
-                result += 1
-    return 100 * result / float(model.grid.width * model.grid.height)
-
-
-def count_mammoths(model: MammothWolfModel) -> int:
-    """
-    Return the number of mammoths.
-    :param MammothWolfModel model: Model whose grass filled cells are counted
-    :returns int: Number of mammoths
-    """
-    result = 0
-    for agent in model.schedule.agents:
-        if isinstance(agent, MammothAgent):
-            result += 1
-    return result
