@@ -2,7 +2,6 @@ from mesa.model import Model
 
 from .animal_agent import AnimalAgent
 from .grass import GrassAgent
-from .animal_data import AnimalData
 import mammoth_wolf_abm.model as abm
 
 
