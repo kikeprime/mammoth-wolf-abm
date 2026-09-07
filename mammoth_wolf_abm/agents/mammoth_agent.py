@@ -41,15 +41,6 @@ class MammothAgent(AnimalAgent):
             is_child=is_child
         )
 
-        self.child_data = AnimalData(
-            ep_gain=ep_gain,
-            max_age=max_age,
-            reproductive_age=reproductive_age,
-            gestation_period=gestation_period,
-            birth_interval=birth_interval,
-            is_child=True
-        )
-
     def move(self):
         """Implement movement of the agent."""
         self.model: abm.MammothWolfModel
