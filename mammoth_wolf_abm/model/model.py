@@ -24,11 +24,13 @@ class MammothWolfModel(Model):
         mammoth_reproductive_age (int): minimum age allowed for reproduction in years for mammoths
         mammoth_gestation_period (int): gestation period in months for mammoths
         mammoth_birth_interval (int): birth_interval in months for mammoths
+        mammoth_litter_size (int): number of offsprings per litter for mammoths
         dire_wolf_ep_gain (int): energy point gained from eating for dire wolves
         dire_wolf_max_age (int): maximum age allowed for this agent in years for dire wolves
         dire_wolf_reproductive_age (int): minimum age allowed for reproduction in years for dire wolves
         dire_wolf_gestation_period (int): gestation period in months for dire wolves
         dire_wolf_birth_interval (int): birth_interval in months for dire wolves
+        dire_wolf_litter_size (int): number of offsprings per litter for dire wolves
         dire_wolf_hunt_success_rate (float): Probability of successful hunt in percentage for dire wolves
         allow_seed (bool): Toggle random seed
         random_seed (int): Random seed
@@ -47,11 +49,13 @@ class MammothWolfModel(Model):
         mammoth_reproductive_age: int,
         mammoth_gestation_period: int,
         mammoth_birth_interval: int,
+        mammoth_litter_size: int,
         dire_wolf_ep_gain: int,
         dire_wolf_max_age: int,
         dire_wolf_reproductive_age: int,
         dire_wolf_gestation_period: int,
         dire_wolf_birth_interval: int,
+        dire_wolf_litter_size: int,
         dire_wolf_hunt_success_rate: float,
         allow_seed: bool,
         random_seed: int,
@@ -67,6 +71,7 @@ class MammothWolfModel(Model):
             reproductive_age=mammoth_reproductive_age,
             gestation_period=mammoth_gestation_period,
             birth_interval=mammoth_birth_interval,
+            litter_size=mammoth_litter_size,
             is_child=False
         )
         self.dire_wolf_data = DireWolfData(
@@ -75,6 +80,7 @@ class MammothWolfModel(Model):
             reproductive_age=dire_wolf_reproductive_age,
             gestation_period=dire_wolf_gestation_period,
             birth_interval=dire_wolf_birth_interval,
+            litter_size=dire_wolf_litter_size,
             hunt_success_rate=dire_wolf_hunt_success_rate,
             is_child=False
         )

@@ -16,6 +16,7 @@ class MammothAgent(AnimalAgent):
         reproductive_age (int): minimum age allowed for reproduction in years
         gestation_period (int): gestation period in months
         birth_interval (int): birth_interval in months
+        litter_size (int): number of offsprings per litter
         is_child (bool): whether the agent is child or not
     """
     def __init__(
@@ -27,6 +28,7 @@ class MammothAgent(AnimalAgent):
         reproductive_age: int,
         gestation_period: int,
         birth_interval: int,
+        litter_size: int,
         is_child: bool,
     ):
         super().__init__(
@@ -37,6 +39,7 @@ class MammothAgent(AnimalAgent):
             reproductive_age=reproductive_age,
             gestation_period=gestation_period,
             birth_interval=birth_interval,
+            litter_size=litter_size,
             is_child=is_child
         )
 

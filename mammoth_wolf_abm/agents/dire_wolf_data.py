@@ -12,6 +12,7 @@ class DireWolfData(AnimalData):
         reproductive_age (float): minimum age allowed for reproduction in years
         gestation_period (int): gestation period in months
         birth_interval (int): birth_interval in months
+        litter_size (int): number of offsprings per litter
         hunt_success_rate (float): Probability of successful hunt in percentage
         is_child (bool): whether the agent is child or not
     """

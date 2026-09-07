@@ -111,6 +111,16 @@
                 "step": 1,
             },
         },
+        "mammoth_litter_size": {
+            "type": "Slider",
+            "params": {
+                "name": "Litter size of woolly mammoths",
+                "value": 1,
+                "min_value": 1,
+                "max_value": 10,
+                "step": 1,
+            },
+        },
         "dire_wolf_ep_gain": {
             "type": "Slider",
             "params": {
@@ -158,6 +168,16 @@
                 "value": 10, // they give birth annually
                 "min_value": 0,
                 "max_value": 100,
+                "step": 1,
+            },
+        },
+        "dire_wolf_litter_size": {
+            "type": "Slider",
+            "params": {
+                "name": "Litter size of woolly mammoths",
+                "value": 4,
+                "min_value": 1,
+                "max_value": 10,
                 "step": 1,
             },
         },

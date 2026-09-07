@@ -9,6 +9,19 @@ import mammoth_wolf_abm.model as abm
 
 
 class AnimalAgent(ABC, Agent):
+    """Agent class for animals.
+
+    Parameters:
+        unique_id (int): Unique identifier for this agent (legacy support)
+        model (MammothWolfModel): the MammothWolf model
+        ep_gain (int): energy point gained from eating
+        max_age (int): maximum age allowed for this agent in years
+        reproductive_age (int): minimum age allowed for reproduction in years
+        gestation_period (int): gestation period in months
+        birth_interval (int): birth_interval in months
+        litter_size (int): number of offsprings per litter
+        is_child (bool): whether the agent is child or not
+    """
     def __init__(
         self,
         unique_id: int,
@@ -18,6 +31,7 @@ class AnimalAgent(ABC, Agent):
         reproductive_age: float,
         gestation_period: int,
         birth_interval: int,
+        litter_size: int,
         is_child: bool,
     ):
         if version("mesa") == "2.4.0":
@@ -35,12 +49,14 @@ class AnimalAgent(ABC, Agent):
         self.reproductive_age = int(reproductive_age * 365)
         self.gestation_period = gestation_period * 30
         self.birth_interval = birth_interval * 30
+        self.litter_size = litter_size
         self.child_data = AnimalData(
             ep_gain=ep_gain,
             max_age=max_age,
             reproductive_age=reproductive_age,
             gestation_period=gestation_period,
             birth_interval=birth_interval,
+            litter_size=litter_size,
             is_child=True
         )
 
