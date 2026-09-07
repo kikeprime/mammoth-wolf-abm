@@ -1,10 +1,11 @@
 from importlib.metadata import version
 
-from .mammoth_agent import MammothAgent
-from .dire_wolf_data import DireWolfData
-import mammoth_wolf_abm.model as abm
 from mesa.agent import Agent
 from mesa.model import Model
+
+from .dire_wolf_data import DireWolfData
+from .mammoth_agent import MammothAgent
+import mammoth_wolf_abm.model as abm
 
 
 class DireWolfAgent(Agent):
@@ -99,6 +100,69 @@ class DireWolfAgent(Agent):
         # Step 6: Check natural death and starvation.
         self.check_death()
 
+    def move(self):
+        """Implement movement of the agent."""
+        self.model: abm.MammothWolfModel
+        cells_to_move, cells_with_mammoth = self.get_dest_cells()
+        if len(cells_with_mammoth) > 0:
+            # Extra limits on hunting goes here.
+            dest_cell = self.model.random.choice(seq=cells_with_mammoth)
+            self.model.grid.move_agent(agent=self, pos=dest_cell)
+        elif len(cells_to_move) > 0:
+            dest_cell = self.model.random.choice(seq=cells_to_move)
+            self.model.grid.move_agent(agent=self, pos=dest_cell)
+
+    def exhaust(self):
+        """Implement exhaustion of the agent."""
+        self.energy -= 1
+
+    def eat(self):
+        """Implement eating of the agent."""
+        self.model: abm.MammothWolfModel
+        contents = self.model.grid.get_cell_list_contents(self.pos)
+        for agent in contents:
+            if isinstance(agent, MammothAgent):
+                if self.model.random.random() < self.hunt_success_rate:
+                    agent.die()
+                    self.energy = self.ep_gain
+
+    def reproduce(self):
+        """Handle reproduction of the agent."""
+        # Make the agent enter gestation if possible.
+        if self.can_gestate():
+            self.gestation = self.gestation_period
+            self.is_gestating = True
+        # If the reason it can't gestate is
+        # being due to give birth
+        # then it will give birth.
+        elif self.can_reproduce():
+            self.model: abm.MammothWolfModel
+            child = DireWolfAgent(
+                unique_id=self.model.next_id(),
+                model=self.model,
+                **dict(self.child_data)
+            )
+            cells_to_move = self.get_free_cells()
+            dest_cell = self.model.random.choice(seq=cells_to_move)
+            self.model.place_agent(agent=child, pos=dest_cell)
+            self.is_gestating = False
+            self.interbirth = self.birth_interval
+        # If the agent is gestating progress it.
+        elif self.gestation > 0:
+            self.gestation -= 1
+        # If the agent is between giving births progress the interbirth period.
+        elif self.interbirth > 0:
+            self.interbirth -= 1
+
+    def aging(self):
+        """Handle aging of the agent."""
+        self.age += 1
+
+    def check_death(self):
+        """Check whether the agent should die either naturally or due to starvation."""
+        if self.age >= self.max_age or self.energy <= 0:
+            self.die()
+
     def get_free_cells(self) -> list:
         """Get the list of the free neighboring cells.
         :returns list: List of free neighboring cells
@@ -138,32 +202,6 @@ class DireWolfAgent(Agent):
                 cells_with_mammoth.append(cell)
         return dest_cells, cells_with_mammoth
 
-    def move(self):
-        """Implement movement of the agent."""
-        self.model: abm.MammothWolfModel
-        cells_to_move, cells_with_mammoth = self.get_dest_cells()
-        if len(cells_with_mammoth) > 0:
-            # Extra limits on hunting goes here.
-            dest_cell = self.model.random.choice(seq=cells_with_mammoth)
-            self.model.grid.move_agent(agent=self, pos=dest_cell)
-        elif len(cells_to_move) > 0:
-            dest_cell = self.model.random.choice(seq=cells_to_move)
-            self.model.grid.move_agent(agent=self, pos=dest_cell)
-
-    def exhaust(self):
-        """Implement exhaustion of the agent."""
-        self.energy -= 1
-
-    def eat(self):
-        """Implement eating of the agent."""
-        self.model: abm.MammothWolfModel
-        contents = self.model.grid.get_cell_list_contents(self.pos)
-        for agent in contents:
-            if isinstance(agent, MammothAgent):
-                if self.model.random.random() < self.hunt_success_rate:
-                    agent.die()
-                    self.energy = self.ep_gain
-
     def can_gestate(self) -> bool:
         """Returns true if the agent can enter gestation.
         :returns bool: True if the agent can enter gestation else False.
@@ -180,43 +218,6 @@ class DireWolfAgent(Agent):
         gestation = self.gestation <= 0
         cell = len(self.get_free_cells()) > 0
         return age and gestation and self.is_gestating and cell
-
-    def reproduce(self):
-        """Handle reproduction of the agent."""
-        # Make the agent enter gestation if possible.
-        if self.can_gestate():
-            self.gestation = self.gestation_period
-            self.is_gestating = True
-        # If the reason it can't gestate is
-        # being due to give birth
-        # then it will give birth.
-        elif self.can_reproduce():
-            self.model: abm.MammothWolfModel
-            child = DireWolfAgent(
-                unique_id=self.model.next_id(),
-                model=self.model,
-                **dict(self.child_data)
-            )
-            cells_to_move = self.get_free_cells()
-            dest_cell = self.model.random.choice(seq=cells_to_move)
-            self.model.place_agent(agent=child, pos=dest_cell)
-            self.is_gestating = False
-            self.interbirth = self.birth_interval
-        # If the agent is gestating progress it.
-        elif self.gestation > 0:
-            self.gestation -= 1
-        # If the agent is between giving births progress the interbirth period.
-        elif self.interbirth > 0:
-            self.interbirth -= 1
-
-    def aging(self):
-        """Handle aging of the agent."""
-        self.age += 1
-
-    def check_death(self):
-        """Check whether the agent should die either naturally or due to starvation."""
-        if self.age >= self.max_age or self.energy <= 0:
-            self.die()
 
     def die(self):
         """Implement removal of the agent."""
