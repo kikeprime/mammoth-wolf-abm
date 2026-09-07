@@ -66,10 +66,6 @@ class DireWolfAgent(AnimalAgent):
             dest_cell = self.model.random.choice(seq=cells_to_move)
             self.model.grid.move_agent(agent=self, pos=dest_cell)
 
-    def exhaust(self):
-        """Implement exhaustion of the agent."""
-        self.energy -= 1
-
     def eat(self):
         """Implement eating of the agent."""
         self.model: abm.MammothWolfModel
@@ -79,38 +75,6 @@ class DireWolfAgent(AnimalAgent):
                 if self.model.random.random() < self.hunt_success_rate:
                     agent.energy = -2 * agent.ep_gain
                     self.energy = self.ep_gain
-
-    def reproduce(self):
-        """Handle reproduction of the agent."""
-        # Make the agent enter gestation if possible.
-        if self.can_gestate():
-            self.gestation = self.gestation_period
-            self.is_gestating = True
-        # If the reason it can't gestate is
-        # being due to give birth
-        # then it will give birth.
-        elif self.can_reproduce():
-            self.model: abm.MammothWolfModel
-            child = DireWolfAgent(
-                unique_id=self.model.next_id(),
-                model=self.model,
-                **dict(self.child_data)
-            )
-            cells_to_move = self.get_free_cells()
-            dest_cell = self.model.random.choice(seq=cells_to_move)
-            self.model.place_agent(agent=child, pos=dest_cell)
-            self.is_gestating = False
-            self.interbirth = self.birth_interval
-        # If the agent is gestating progress it.
-        elif self.gestation > 0:
-            self.gestation -= 1
-        # If the agent is between giving births progress the interbirth period.
-        elif self.interbirth > 0:
-            self.interbirth -= 1
-
-    def aging(self):
-        """Handle aging of the agent."""
-        self.age += 1
 
     def get_dest_cells(self) -> tuple[list, list]:
         """Get the list of the possible destination cells.
