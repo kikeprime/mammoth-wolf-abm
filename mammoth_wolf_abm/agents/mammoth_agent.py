@@ -1,5 +1,3 @@
-from importlib.metadata import version
-
 from mesa.model import Model
 
 from .animal_agent import AnimalAgent
