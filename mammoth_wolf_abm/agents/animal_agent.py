@@ -123,15 +123,8 @@ class AnimalAgent(ABC, Agent):
         # being due to give birth
         # then it will give birth.
         elif self.can_reproduce():
-            self.model: abm.MammothWolfModel
-            child = type(self)(
-                unique_id=self.model.next_id(),
-                model=self.model,
-                **dict(self.child_data)
-            )
-            cells_to_move = self.get_free_cells()
-            dest_cell = self.model.random.choice(seq=cells_to_move)
-            self.model.place_agent(agent=child, pos=dest_cell)
+            for i in range(self.litter_size):
+                self.give_birth()
             self.is_gestating = False
             self.interbirth = self.birth_interval
         # If the agent is gestating progress it.
@@ -183,6 +176,17 @@ class AnimalAgent(ABC, Agent):
         gestation = self.gestation <= 0
         cell = len(self.get_free_cells()) > 0
         return age and gestation and self.is_gestating and cell
+
+    def give_birth(self):
+        self.model: abm.MammothWolfModel
+        child = type(self)(
+            unique_id=self.model.next_id(),
+            model=self.model,
+            **dict(self.child_data)
+        )
+        cells_to_move = self.get_free_cells()
+        dest_cell = self.model.random.choice(seq=cells_to_move)
+        self.model.place_agent(agent=child, pos=dest_cell)
 
     def die(self):
         """Implement removal of the agent."""
