@@ -3,7 +3,7 @@ from mesa.model import Model
 from mesa.space import MultiGrid
 from mesa.time import RandomActivation
 
-from mammoth_wolf_abm.agents import GrassAgent, MammothAgent, MammothData
+from mammoth_wolf_abm.agents import AnimalData, GrassAgent, MammothAgent
 import mammoth_wolf_abm.utils.counters as counters
 
 
@@ -39,7 +39,7 @@ class MammothWolfModel(Model):
         self.width = width
         self.height = height
         self.torus = torus
-        self.mammoth_data = MammothData(
+        self.mammoth_data = AnimalData(
             ep_gain=mammoth_ep_gain,
             max_age=mammoth_max_age,
             reproductive_age=mammoth_reproductive_age,
