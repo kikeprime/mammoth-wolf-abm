@@ -178,6 +178,9 @@ class AnimalAgent(ABC, Agent):
         return age and gestation and self.is_gestating and cell
 
     def give_birth(self):
+        """The agent gives birth if there are free neighboring cells."""
+        if not self.can_reproduce():
+            return
         self.model: abm.MammothWolfModel
         child = type(self)(
             unique_id=self.model.next_id(),
