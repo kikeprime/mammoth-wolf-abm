@@ -84,20 +84,10 @@ class AnimalAgent(ABC, Agent):
             else:
                 self.is_gestating = True
 
+    @abstractmethod
     def step(self):
         """Actions of the agent during one step of the simulation."""
-        # Step 1: Move to a neighboring cell.
-        self.move()
-        # Step 2: Exhaust the agent. Currently, it decreases energy.
-        self.exhaust()
-        # Step 3: Eating.
-        self.eat()
-        # Step 4: Reproductive functions.
-        self.reproduce()
-        # Step 5: Aging.
-        self.aging()
-        # Step 6: Check natural death and starvation.
-        self.check_death()
+        pass
 
     @abstractmethod
     def move(self):

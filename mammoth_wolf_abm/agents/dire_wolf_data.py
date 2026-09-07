@@ -14,6 +14,8 @@ class DireWolfData(AnimalData):
         birth_interval (int): birth_interval in months
         litter_size (int): number of offsprings per litter
         hunt_success_rate (float): Probability of successful hunt in percentage
+        pack (int): the dire wolf agent's pack
         is_child (bool): whether the agent is child or not
     """
     hunt_success_rate: float
+    pack: int

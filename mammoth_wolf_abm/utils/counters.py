@@ -34,15 +34,17 @@ def count_mammoths(model: Model) -> int:
     return result
 
 
-def count_dire_wolves(model: Model) -> int:
+def count_dire_wolves(model: Model, pack: int = None) -> int:
     """
     Return the number of dire wolves.
     :param MammothWolfModel model: Model whose dire wolf agents are counted
+    :param int pack: the dire wolf agent's pack
     :returns int: Number of dire wolves
     """
     model: abm.MammothWolfModel
     result = 0
     for agent in model.schedule.agents:
         if isinstance(agent, DireWolfAgent):
-            result += 1
+            if pack is None or agent.pack == pack:
+                result += 1
     return result

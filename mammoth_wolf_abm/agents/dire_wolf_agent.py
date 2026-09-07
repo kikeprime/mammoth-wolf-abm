@@ -32,6 +32,7 @@ class DireWolfAgent(AnimalAgent):
         birth_interval: int,
         litter_size: int,
         hunt_success_rate: float,
+        pack: int,
         is_child: bool,
     ):
         super().__init__(
@@ -47,6 +48,7 @@ class DireWolfAgent(AnimalAgent):
         )
 
         self.hunt_success_rate = hunt_success_rate / 100
+        self.pack = pack
         self.child_data = DireWolfData(
             ep_gain=ep_gain,
             max_age=max_age,
@@ -55,8 +57,26 @@ class DireWolfAgent(AnimalAgent):
             birth_interval=birth_interval,
             litter_size=litter_size,
             hunt_success_rate=hunt_success_rate,
+            pack=pack,
             is_child=True
         )
+
+    def step(self):
+        """Actions of the agent during one step of the simulation."""
+        # Step 1: Move to a neighboring cell.
+        self.move()
+        # Step 2: Exhaust the agent. Currently, it decreases energy.
+        self.exhaust()
+        # Step 3: Eating.
+        self.eat()
+        # Step 4: Reproductive functions.
+        self.reproduce()
+        # Step 5: Aging.
+        self.aging()
+        # Step 6: Pack management.
+        self.pack_management()
+        # Step 7: Check natural death and starvation.
+        self.check_death()
 
     def move(self):
         """Implement movement of the agent."""
@@ -71,14 +91,18 @@ class DireWolfAgent(AnimalAgent):
             self.model.grid.move_agent(agent=self, pos=dest_cell)
 
     def eat(self):
-        """Implement eating of the agent."""
+        """Implement hunting of the dire wolves.
+        Successful hunt fills all wolf's belly.
+        """
         self.model: abm.MammothWolfModel
         contents = self.model.grid.get_cell_list_contents(self.pos)
         for agent in contents:
             if isinstance(agent, MammothAgent):
                 if self.model.random.random() < self.hunt_success_rate:
                     agent.energy = -2 * agent.ep_gain
-                    self.energy = self.ep_gain
+                    for dire_wolf in self.model.agents:
+                        if isinstance(dire_wolf, DireWolfAgent) and dire_wolf.pack == self.pack:
+                            dire_wolf.energy = dire_wolf.ep_gain
 
     def get_dest_cells(self) -> tuple[list, list]:
         """Get the list of the possible destination cells.
@@ -101,3 +125,15 @@ class DireWolfAgent(AnimalAgent):
                 dest_cells.append(cell)
                 cells_with_mammoth.append(cell)
         return dest_cells, cells_with_mammoth
+
+    def pack_management(self):
+        """Manages leaving the current pack of the agent."""
+        self.model: abm.MammothWolfModel
+        if self.model.count_dire_wolves(model=self.model, pack=self.pack) > 10:
+            ages = []
+            for agent in self.model.agents:
+                if isinstance(agent, DireWolfAgent) and agent.pack == self.pack:
+                    ages.append(agent.age)
+            if self.age == max(ages):
+                self.pack += 1
+                self.child_data.pack += 1

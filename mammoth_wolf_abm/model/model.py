@@ -82,6 +82,7 @@ class MammothWolfModel(Model):
             birth_interval=dire_wolf_birth_interval,
             litter_size=dire_wolf_litter_size,
             hunt_success_rate=dire_wolf_hunt_success_rate,
+            pack=0,
             is_child=False
         )
 
@@ -104,6 +105,7 @@ class MammothWolfModel(Model):
         self.initialize_mammoth_agents()
         self.initialize_dire_wolf_agents()
 
+        self.count_dire_wolves = counters.count_dire_wolves
         self.datacollector = DataCollector(
             model_reporters={
                 "Ratio of grass patches (%)": counters.count_grass_cells,
