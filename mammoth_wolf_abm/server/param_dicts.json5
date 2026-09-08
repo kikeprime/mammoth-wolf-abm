@@ -191,6 +191,16 @@
                 "step": 1e-2,
             },
         },
+        "max_dire_wolf_pack_size": {
+            "type": "Slider",
+            "params": {
+                "name": "Maximum size of a dire wolf pack",
+                "value": 10,
+                "min_value": 1,
+                "max_value": 100,
+                "step": 1,
+            },
+        },
         "allow_seed": {
             "type": "Checkbox",
             "params": {

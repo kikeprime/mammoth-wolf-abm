@@ -32,6 +32,7 @@ class MammothWolfModel(Model):
         dire_wolf_birth_interval (int): birth_interval in months for dire wolves
         dire_wolf_litter_size (int): number of offsprings per litter for dire wolves
         dire_wolf_hunt_success_rate (float): Probability of successful hunt in percentage for dire wolves
+        max_dire_wolf_pack_size (int): maximum size of a dire wolf pack
         allow_seed (bool): Toggle random seed
         random_seed (int): Random seed
     """
@@ -57,6 +58,7 @@ class MammothWolfModel(Model):
         dire_wolf_birth_interval: int,
         dire_wolf_litter_size: int,
         dire_wolf_hunt_success_rate: float,
+        max_dire_wolf_pack_size: int,
         allow_seed: bool,
         random_seed: int,
     ):
@@ -91,6 +93,7 @@ class MammothWolfModel(Model):
 
         self.n_mammoth = n_mammoth
         self.n_dire_wolf = n_dire_wolf
+        self.max_dire_wolf_pack_size = max_dire_wolf_pack_size
 
         if allow_seed:
             self.random.seed(a=random_seed)

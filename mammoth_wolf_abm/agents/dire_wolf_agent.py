@@ -129,7 +129,7 @@ class DireWolfAgent(AnimalAgent):
     def pack_management(self):
         """Manages leaving the current pack of the agent."""
         self.model: abm.MammothWolfModel
-        if self.model.count_dire_wolves(model=self.model, pack=self.pack) > 10:
+        if self.model.count_dire_wolves(model=self.model, pack=self.pack) > self.model.max_dire_wolf_pack_size:
             ages = []
             for agent in self.model.schedule.agents:
                 if isinstance(agent, DireWolfAgent) and agent.pack == self.pack:
