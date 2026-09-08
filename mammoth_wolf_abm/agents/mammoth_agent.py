@@ -61,9 +61,14 @@ class MammothAgent(AnimalAgent):
     def move(self):
         """Implement movement of the agent."""
         self.model: abm.MammothWolfModel
+        cells_with_grown_grass = self.get_cells_with_grown_grass()
         cells_to_move = self.get_free_cells()
-        if len(cells_to_move) > 0:
+        dest_cell = None
+        if len(cells_with_grown_grass) > 0:
+            dest_cell = self.model.random.choice(seq=cells_with_grown_grass)
+        elif len(cells_to_move) > 0:
             dest_cell = self.model.random.choice(seq=cells_to_move)
+        if dest_cell is not None:
             self.model.grid.move_agent(agent=self, pos=dest_cell)
 
     def eat(self):
@@ -75,3 +80,14 @@ class MammothAgent(AnimalAgent):
                 agent.grown = False
                 if self.model.random.random() < 0.5:
                     agent.boosted = True
+
+    def get_cells_with_grown_grass(self) -> list:
+        """Return a list of cells with a grown grass."""
+        self.model: abm.MammothWolfModel
+        cells = []
+        for cell in self.get_free_cells():
+            grass = self.model.grid.get_cell_list_contents(cell)[0]
+            grass: GrassAgent
+            if grass.grown:
+                cells.append(cell)
+        return cells
