@@ -2,8 +2,8 @@ from dataclasses import asdict, dataclass
 
 
 @dataclass
-class MammothData:
-    """Dataclass containing the data for the MammothAgent.
+class AnimalData:
+    """Dataclass containing the data for the AnimalAgent.
     Attributes:
         ep_gain (int): energy point gained from eating
         max_age (int): maximum age allowed for this agent in years
