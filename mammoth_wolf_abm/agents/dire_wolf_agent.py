@@ -100,9 +100,8 @@ class DireWolfAgent(AnimalAgent):
             if isinstance(agent, MammothAgent):
                 if self.model.random.random() < self.hunt_success_rate:
                     agent.energy = -2 * agent.ep_gain
-                    for dire_wolf in self.model.agents_by_type[DireWolfAgent]:
-                        dire_wolf: DireWolfAgent
-                        if dire_wolf.pack == self.pack:
+                    for dire_wolf in self.model.schedule.agents:
+                        if isinstance(dire_wolf, DireWolfAgent) and dire_wolf.pack == self.pack:
                             dire_wolf.energy = dire_wolf.ep_gain
 
     def get_dest_cells(self) -> tuple[list, list]:
@@ -132,9 +131,8 @@ class DireWolfAgent(AnimalAgent):
         self.model: abm.MammothWolfModel
         if self.model.count_dire_wolves(model=self.model, pack=self.pack) > 10:
             ages = []
-            for agent in self.model.agents_by_type[DireWolfAgent]:
-                agent: DireWolfAgent
-                if agent.pack == self.pack:
+            for agent in self.model.schedule.agents:
+                if isinstance(agent, DireWolfAgent) and agent.pack == self.pack:
                     ages.append(agent.age)
             if self.age == max(ages):
                 self.pack += 1
