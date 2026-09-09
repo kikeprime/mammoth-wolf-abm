@@ -9,15 +9,29 @@ import mammoth_wolf_abm.model as abm
 
 
 class AnimalAgent(ABC, Agent):
+    """Agent class for animals.
+
+    Parameters:
+        unique_id (int): Unique identifier for this agent (legacy support)
+        model (MammothWolfModel): the MammothWolf model
+        ep_gain (int): energy point gained from eating
+        max_age (int): maximum age allowed for this agent in years
+        reproductive_age (int): minimum age allowed for reproduction in years
+        gestation_period (int): gestation period in months
+        birth_interval (int): birth_interval in months
+        litter_size (int): number of offsprings per litter
+        is_child (bool): whether the agent is child or not
+    """
     def __init__(
         self,
         unique_id: int,
         model: Model,
         ep_gain: int,
         max_age: int,
-        reproductive_age: int,
+        reproductive_age: float,
         gestation_period: int,
         birth_interval: int,
+        litter_size: int,
         is_child: bool,
     ):
         if version("mesa") == "2.4.0":
@@ -32,15 +46,17 @@ class AnimalAgent(ABC, Agent):
 
         self.ep_gain = ep_gain
         self.max_age = max_age * 365
-        self.reproductive_age = reproductive_age * 365
+        self.reproductive_age = int(reproductive_age * 365)
         self.gestation_period = gestation_period * 30
         self.birth_interval = birth_interval * 30
+        self.litter_size = litter_size
         self.child_data = AnimalData(
             ep_gain=ep_gain,
             max_age=max_age,
             reproductive_age=reproductive_age,
             gestation_period=gestation_period,
             birth_interval=birth_interval,
+            litter_size=litter_size,
             is_child=True
         )
 
@@ -68,20 +84,10 @@ class AnimalAgent(ABC, Agent):
             else:
                 self.is_gestating = True
 
+    @abstractmethod
     def step(self):
         """Actions of the agent during one step of the simulation."""
-        # Step 1: Move to a neighboring cell.
-        self.move()
-        # Step 2: Exhaust the agent. Currently, it decreases energy.
-        self.exhaust()
-        # Step 3: Eating.
-        self.eat()
-        # Step 4: Reproductive functions.
-        self.reproduce()
-        # Step 5: Aging.
-        self.aging()
-        # Step 6: Check natural death and starvation.
-        self.check_death()
+        pass
 
     @abstractmethod
     def move(self):
@@ -107,15 +113,8 @@ class AnimalAgent(ABC, Agent):
         # being due to give birth
         # then it will give birth.
         elif self.can_reproduce():
-            self.model: abm.MammothWolfModel
-            child = type(self)(
-                unique_id=self.model.next_id(),
-                model=self.model,
-                **dict(self.child_data)
-            )
-            cells_to_move = self.get_free_cells()
-            dest_cell = self.model.random.choice(seq=cells_to_move)
-            self.model.place_agent(agent=child, pos=dest_cell)
+            for i in range(self.litter_size):
+                self.give_birth()
             self.is_gestating = False
             self.interbirth = self.birth_interval
         # If the agent is gestating progress it.
@@ -167,6 +166,19 @@ class AnimalAgent(ABC, Agent):
         gestation = self.gestation <= 0
         cell = len(self.get_free_cells()) > 0
         return age and gestation and self.is_gestating and cell
+
+    def give_birth(self):
+        """The agent gives birth if there are free neighboring cells."""
+        self.model: abm.MammothWolfModel
+        cells_to_move = self.get_free_cells()
+        if len(cells_to_move) > 0:
+            child = type(self)(
+                unique_id=self.model.next_id(),
+                model=self.model,
+                **dict(self.child_data)
+            )
+            dest_cell = self.model.random.choice(seq=cells_to_move)
+            self.model.place_agent(agent=child, pos=dest_cell)
 
     def die(self):
         """Implement removal of the agent."""

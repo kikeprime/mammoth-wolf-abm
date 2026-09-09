@@ -7,7 +7,7 @@
     },
     "chart_list": [
         {"Label": "Number of mammoths", "Color": "brown"},
-        {"Label": "Number of wolves", "Color": "gray"},
+        {"Label": "Number of dire wolves", "Color": "gray"},
         {"Label": "Ratio of grass patches (%)", "Color": "green"},
     ],
     "params": {
@@ -17,7 +17,7 @@
             "type": "Checkbox",
             "params": {
                 name: "Torus",
-                value: true,
+                value: false,
                 description: "Whether the edges are connected or not.",
             },
         },
@@ -25,6 +25,16 @@
             "type": "Slider",
             "params": {
                 "name": "Initial number of woolly mammoths",
+                "value": 20,
+                "min_value": 0,
+                "max_value": 100,
+                "step": 1,
+            },
+        },
+        "n_dire_wolf": {
+            "type": "Slider",
+            "params": {
+                "name": "Initial number of dire wolves",
                 "value": 20,
                 "min_value": 0,
                 "max_value": 100,
@@ -97,6 +107,96 @@
                 "name": "Birth interval of woolly mammoths (months)",
                 "value": 54,
                 "min_value": 0,
+                "max_value": 100,
+                "step": 1,
+            },
+        },
+        "mammoth_litter_size": {
+            "type": "Slider",
+            "params": {
+                "name": "Litter size of woolly mammoths",
+                "value": 1,
+                "min_value": 1,
+                "max_value": 10,
+                "step": 1,
+            },
+        },
+        "dire_wolf_ep_gain": {
+            "type": "Slider",
+            "params": {
+                "name": "EP gain for dire wolves",
+                "value": 14,
+                "min_value": 1,
+                "max_value": 100,
+                "step": 1,
+            },
+        },
+        "dire_wolf_max_age": {
+            "type": "Slider",
+            "params": {
+                "name": "Maximum age of dire wolves (years)",
+                "value": 8,
+                "min_value": 1,
+                "max_value": 100,
+                "step": 1,
+            },
+        },
+        "dire_wolf_reproductive_age": {
+            "type": "Slider",
+            "params": {
+                "name": "Minimum age for reproduction for dire wolves (years)",
+                "value": 1.5, // 18 months
+                "min_value": 1,
+                "max_value": 100,
+                "step": 1e-1,
+            },
+        },
+        "dire_wolf_gestation_period": {
+            "type": "Slider",
+            "params": {
+                "name": "Gestation period of dire wolves (months)",
+                "value": 2, // 63 days
+                "min_value": 0,
+                "max_value": 100,
+                "step": 1,
+            },
+        },
+        "dire_wolf_birth_interval": {
+            "type": "Slider",
+            "params": {
+                "name": "Birth interval of dire wolves (months)",
+                "value": 10, // they give birth annually
+                "min_value": 0,
+                "max_value": 100,
+                "step": 1,
+            },
+        },
+        "dire_wolf_litter_size": {
+            "type": "Slider",
+            "params": {
+                "name": "Litter size of woolly mammoths",
+                "value": 4,
+                "min_value": 1,
+                "max_value": 10,
+                "step": 1,
+            },
+        },
+        "dire_wolf_hunt_success_rate": {
+            "type": "Slider",
+            "params": {
+                "name": "Possibility of successful hunt for dire wolves (%)",
+                "value": 14.29, // 1 / 7
+                "min_value": 0,
+                "max_value": 100,
+                "step": 1e-2,
+            },
+        },
+        "max_dire_wolf_pack_size": {
+            "type": "Slider",
+            "params": {
+                "name": "Maximum size of a dire wolf pack",
+                "value": 10,
+                "min_value": 1,
                 "max_value": 100,
                 "step": 1,
             },
