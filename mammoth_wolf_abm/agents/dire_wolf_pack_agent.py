@@ -23,7 +23,7 @@ class DireWolfPackAgent(Agent):
         self.unique_id = unique_id
         self.model = model
         self.pack_id = pack_id
-        self.members = []
+        self.members: list[DireWolfAgent] = []
 
     def step(self):
         self.move()

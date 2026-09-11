@@ -87,7 +87,7 @@ class DireWolfAgent(AnimalAgent):
         for agent in contents:
             if isinstance(agent, MammothAgent):
                 if self.model.random.random() < self.hunt_success_rate:
-                    agent.energy = -2 * agent.ep_gain
-                    for dire_wolf in self.model.schedule.agents:
-                        if isinstance(dire_wolf, DireWolfAgent) and dire_wolf.pack == self.pack:
+                    agent.die()
+                    for dire_wolf in self.model.packs[self.pack].members:
+                        if dire_wolf.pack == self.pack:
                             dire_wolf.energy = dire_wolf.ep_gain
