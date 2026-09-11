@@ -167,18 +167,10 @@ class AnimalAgent(ABC, Agent):
         cell = len(self.get_free_cells()) > 0
         return age and gestation and self.is_gestating and cell
 
+    @abstractmethod
     def give_birth(self):
         """The agent gives birth if there are free neighboring cells."""
-        self.model: abm.MammothWolfModel
-        cells_to_move = self.get_free_cells()
-        if len(cells_to_move) > 0:
-            child = type(self)(
-                unique_id=self.model.next_id(),
-                model=self.model,
-                **dict(self.child_data)
-            )
-            dest_cell = self.model.random.choice(seq=cells_to_move)
-            self.model.place_agent(agent=child, pos=dest_cell)
+        pass
 
     def die(self):
         """Implement removal of the agent."""

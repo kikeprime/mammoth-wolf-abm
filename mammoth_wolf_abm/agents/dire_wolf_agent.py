@@ -2,6 +2,7 @@ from mesa.model import Model
 
 from .animal_agent import AnimalAgent
 from .dire_wolf_data import DireWolfData
+from .dire_wolf_pack_agent import DireWolfPackAgent
 from .mammoth_agent import MammothAgent
 import mammoth_wolf_abm.model as abm
 
@@ -25,6 +26,7 @@ class DireWolfAgent(AnimalAgent):
         self,
         unique_id: int,
         model: Model,
+        pack: int,
         ep_gain: int,
         max_age: int,
         reproductive_age: float,
@@ -32,7 +34,6 @@ class DireWolfAgent(AnimalAgent):
         birth_interval: int,
         litter_size: int,
         hunt_success_rate: float,
-        pack: int,
         is_child: bool,
     ):
         super().__init__(
@@ -49,6 +50,7 @@ class DireWolfAgent(AnimalAgent):
 
         self.hunt_success_rate = hunt_success_rate / 100
         self.pack = pack
+
         self.child_data = DireWolfData(
             ep_gain=ep_gain,
             max_age=max_age,
@@ -57,38 +59,61 @@ class DireWolfAgent(AnimalAgent):
             birth_interval=birth_interval,
             litter_size=litter_size,
             hunt_success_rate=hunt_success_rate,
-            pack=pack,
             is_child=True
         )
 
     def step(self):
         """Actions of the agent during one step of the simulation."""
-        # Step 1: Move to a neighboring cell.
-        self.move()
-        # Step 2: Exhaust the agent. Currently, it decreases energy.
+        # Step 1: Exhaust the agent.
         self.exhaust()
-        # Step 3: Eating.
+        # Step 2: Eating.
         self.eat()
-        # Step 4: Reproductive functions.
+        # Step 3: Reproductive functions.
         self.reproduce()
-        # Step 5: Aging.
+        # Step 4: Aging.
         self.aging()
-        # Step 6: Pack management.
-        self.pack_management()
-        # Step 7: Check natural death and starvation.
+        # Step 4: Check pack size and leave if it's too large.
+        self.leave_pack()
+        # Step 6: Check natural death and starvation.
         self.check_death()
 
     def move(self):
-        """Implement movement of the agent."""
+        """DireWolfPackAgent moves the agent."""
+        pass
+
+    def give_birth(self):
+        """The agent gives birth if there are free neighboring cells."""
         self.model: abm.MammothWolfModel
-        cells_to_move, cells_with_mammoth = self.get_dest_cells()
-        if len(cells_with_mammoth) > 0:
-            # Extra limits on hunting goes here.
-            dest_cell = self.model.random.choice(seq=cells_with_mammoth)
-            self.model.grid.move_agent(agent=self, pos=dest_cell)
-        elif len(cells_to_move) > 0:
-            dest_cell = self.model.random.choice(seq=cells_to_move)
-            self.model.grid.move_agent(agent=self, pos=dest_cell)
+        child = DireWolfAgent(
+            unique_id=self.model.next_id(),
+            model=self.model,
+            pack=self.pack,
+            **dict(self.child_data)
+        )
+        self.model.packs[self.pack].add_member(dire_wolf=child)
+        self.model.place_agent(agent=child, pos=self.pos)
+
+    def leave_pack(self):
+        self.model: abm.MammothWolfModel
+        pack = self.model.packs[self.pack]
+        if len(pack.members) > self.model.max_dire_wolf_pack_size:
+            ages = []
+            for member in pack.members:
+                ages.append(member.age)
+            if max(ages) == self.age:
+                pack.remove_member(self)
+                self.create_pack()
+
+    def create_pack(self):
+        self.model: abm.MammothWolfModel
+        pack = DireWolfPackAgent(
+            unique_id=self.model.next_id(),
+            model=self.model,
+            pack_id=len(self.model.packs),
+        )
+        pack.add_member(dire_wolf=self)
+        self.model.place_agent(agent=pack, pos=self.pos)
+        self.model.packs.append(pack)
 
     def eat(self):
         """Implement hunting of the dire wolves.
@@ -99,41 +124,7 @@ class DireWolfAgent(AnimalAgent):
         for agent in contents:
             if isinstance(agent, MammothAgent):
                 if self.model.random.random() < self.hunt_success_rate:
-                    agent.energy = -2 * agent.ep_gain
-                    for dire_wolf in self.model.schedule.agents:
-                        if isinstance(dire_wolf, DireWolfAgent) and dire_wolf.pack == self.pack:
+                    agent.die()
+                    for dire_wolf in self.model.packs[self.pack].members:
+                        if dire_wolf.pack == self.pack:
                             dire_wolf.energy = dire_wolf.ep_gain
-
-    def get_dest_cells(self) -> tuple[list, list]:
-        """Get the list of the possible destination cells.
-        :returns tuple[list, list]: tuple of lists with possible destination cells and cells with a mammoth
-        """
-        self.model: abm.MammothWolfModel
-        cells = self.model.grid.get_neighborhood(
-            pos=self.pos,
-            moore=True,
-            include_center=False,
-            radius=1
-        )
-        dest_cells = []
-        cells_with_mammoth = []
-        for cell in cells:
-            contents = self.model.grid.get_cell_list_contents(cell)
-            if len(contents) == 1:
-                dest_cells.append(cell)
-            if len(contents) == 2 and isinstance(contents[1], MammothAgent):
-                dest_cells.append(cell)
-                cells_with_mammoth.append(cell)
-        return dest_cells, cells_with_mammoth
-
-    def pack_management(self):
-        """Manages leaving the current pack of the agent."""
-        self.model: abm.MammothWolfModel
-        if self.model.count_dire_wolves(model=self.model, pack=self.pack) > self.model.max_dire_wolf_pack_size:
-            ages = []
-            for agent in self.model.schedule.agents:
-                if isinstance(agent, DireWolfAgent) and agent.pack == self.pack:
-                    ages.append(agent.age)
-            if self.age == max(ages):
-                self.pack += 1
-                self.child_data.pack += 1
