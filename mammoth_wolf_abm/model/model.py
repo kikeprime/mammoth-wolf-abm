@@ -1,9 +1,9 @@
 from mesa.datacollection import DataCollector
 from mesa.model import Model
 from mesa.space import MultiGrid
-from mesa.time import RandomActivationByType
+from mesa.time import RandomActivation
 
-from mammoth_wolf_abm.agents import AnimalData, DireWolfAgent, DireWolfData, GrassAgent, MammothAgent
+from mammoth_wolf_abm.agents import AnimalData, DireWolfAgent, DireWolfData, DireWolfPackAgent, GrassAgent, MammothAgent
 import mammoth_wolf_abm.utils.counters as counters
 
 
@@ -87,12 +87,14 @@ class MammothWolfModel(Model):
             is_child=False
         )
 
-        self.schedule = RandomActivationByType(model=self)
+        self.schedule = RandomActivation(model=self)
         self.grid = MultiGrid(width=width, height=height, torus=torus)
 
         self.n_mammoth = n_mammoth
         self.n_dire_wolf = n_dire_wolf
         self.max_dire_wolf_pack_size = max_dire_wolf_pack_size
+
+        self.packs = []
 
         if allow_seed:
             self.random.seed(a=random_seed)
@@ -134,8 +136,7 @@ class MammothWolfModel(Model):
                 grass_regrow_rate=grass_regrow_rate / 100.0,
                 grass_regrow_rate_boosted=grass_regrow_rate_boosted / 100.0,
             )
-            self.schedule.add(agent=grass)
-            self.grid.place_agent(agent=grass, pos=(grass_id % self.width, grass_id // self.width))
+            self.place_agent(agent=grass, pos=(grass_id % self.width, grass_id // self.width))
 
     def initialize_mammoth_agents(self):
         """Generate and place the initial mammoth agents."""
@@ -151,14 +152,27 @@ class MammothWolfModel(Model):
 
     def initialize_dire_wolf_agents(self):
         """Generate and place the initial dire wolf agents."""
+        x = 0
+        y = 0
+        pack = None
         for i in range(self.n_dire_wolf):
+            if i % self.max_dire_wolf_pack_size == 0:
+                x = self.random.randrange(self.width)
+                y = self.random.randrange(self.height)
+                pack = DireWolfPackAgent(
+                    unique_id=self.next_id(),
+                    model=self,
+                    pack_id=len(self.packs),
+                )
+                self.place_agent(agent=pack, pos=(x, y))
+                self.packs.append(pack)
             dire_wolf = DireWolfAgent(
                 unique_id=self.next_id(),
                 model=self,
+                pack=pack.pack_id,
                 **dict(self.dire_wolf_data)
             )
-            x = self.random.randrange(self.width)
-            y = self.random.randrange(self.height)
+            pack.add_member(dire_wolf=dire_wolf)
             self.place_agent(agent=dire_wolf, pos=(x, y))
 
     def step(self):

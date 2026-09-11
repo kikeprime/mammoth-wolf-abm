@@ -9,7 +9,7 @@ import mammoth_wolf_abm.model as abm
 
 
 class DireWolfPackAgent(Agent):
-    def __init__(self, unique_id: int, model: Model, pack_id: int, pos: tuple[int, int]):
+    def __init__(self, unique_id: int, model: Model, pack_id: int):
         if version("mesa") == "2.4.0":
             super().__init__(unique_id=unique_id, model=model)
         elif version("mesa") > "2.4.0":
@@ -21,32 +21,38 @@ class DireWolfPackAgent(Agent):
                 print("Incompatible mesa version.")
 
         self.unique_id = unique_id
-        self.pack_id = pack_id
         self.model = model
-        self.pos = pos
+        self.pack_id = pack_id
         self.members = []
+
+    def step(self):
+        self.move()
+        if len(self.members) == 0:
+            self.model: abm.MammothWolfModel
+            self.model.schedule.remove(agent=self)
 
     def move(self):
         """Implement movement of the pack."""
         self.model: abm.MammothWolfModel
         cells_to_move, cells_with_mammoth = self.get_dest_cells()
-        dest_cell = None
+        dest_cell: tuple[int, int] | None = None
         if len(cells_with_mammoth) > 0:
             # Extra limits on hunting goes here.
             dest_cell = self.model.random.choice(seq=cells_with_mammoth)
         elif len(cells_to_move) > 0:
             dest_cell = self.model.random.choice(seq=cells_to_move)
         if dest_cell is not None:
-            self.pos = dest_cell
+            self.model.grid.move_agent(agent=self, pos=dest_cell)
             for agent in self.members:
-                self.model.grid.move_agent(agent=agent, pos=dest_cell)
+                if agent.pos is not None:
+                    self.model.grid.move_agent(agent=agent, pos=dest_cell)
 
     def add_member(self, dire_wolf: DireWolfAgent):
-        self.model: abm.MammothWolfModel
         dire_wolf.pack = self.pack_id
-        dire_wolf.child_data.pack = self.pack_id
-        self.model.place_agent(agent=dire_wolf, pos=self.pos)
         self.members.append(dire_wolf)
+
+    def remove_member(self, dire_wolf: DireWolfAgent):
+        self.members.remove(dire_wolf)
 
     def get_dest_cells(self) -> tuple[list, list]:
         """Get the list of the possible destination cells.
