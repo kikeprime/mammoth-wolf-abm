@@ -69,13 +69,29 @@ class DireWolfAgent(AnimalAgent):
         # Step 2: Eating.
         self.eat()
         # Step 3: Reproductive functions.
-        # self.reproduce()
+        self.reproduce()
         # Step 4: Aging.
         self.aging()
         # Step 4: Check pack size and leave if it's too large.
         self.leave_pack()
         # Step 6: Check natural death and starvation.
         self.check_death()
+
+    def move(self):
+        """DireWolfPackAgent moves the agent."""
+        pass
+
+    def give_birth(self):
+        """The agent gives birth if there are free neighboring cells."""
+        self.model: abm.MammothWolfModel
+        child = DireWolfAgent(
+            unique_id=self.model.next_id(),
+            model=self.model,
+            pack=self.pack,
+            **dict(self.child_data)
+        )
+        self.model.packs[self.pack].add_member(dire_wolf=child)
+        self.model.place_agent(agent=child, pos=self.pos)
 
     def leave_pack(self):
         self.model: abm.MammothWolfModel
@@ -98,10 +114,6 @@ class DireWolfAgent(AnimalAgent):
         pack.add_member(dire_wolf=self)
         self.model.place_agent(agent=pack, pos=self.pos)
         self.model.packs.append(pack)
-
-    def move(self):
-        """DireWolfPackAgent moves the agent."""
-        pass
 
     def eat(self):
         """Implement hunting of the dire wolves.
