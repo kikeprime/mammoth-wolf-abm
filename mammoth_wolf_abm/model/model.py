@@ -1,7 +1,7 @@
 from mesa.datacollection import DataCollector
 from mesa.model import Model
 from mesa.space import MultiGrid
-from mesa.time import RandomActivation
+from mesa.time import RandomActivationByType
 
 from mammoth_wolf_abm.agents import AnimalData, DireWolfAgent, DireWolfData, DireWolfPackAgent, GrassAgent, MammothAgent
 import mammoth_wolf_abm.utils.counters as counters
@@ -87,7 +87,7 @@ class MammothWolfModel(Model):
             is_child=False
         )
 
-        self.schedule = RandomActivation(model=self)
+        self.schedule = RandomActivationByType(model=self)
         self.grid = MultiGrid(width=width, height=height, torus=torus)
 
         self.n_mammoth = n_mammoth
@@ -177,7 +177,10 @@ class MammothWolfModel(Model):
 
     def step(self):
         """Actions executed by the model during one step of the simulation."""
-        self.schedule.step()
+        self.schedule.step_type(agenttype=GrassAgent)
+        self.schedule.step_type(agenttype=MammothAgent)
+        self.schedule.step_type(agenttype=DireWolfPackAgent)
+        self.schedule.step_type(agenttype=DireWolfAgent)
         self.datacollector.collect(model=self)
 
     def place_agent(self, agent, pos):
