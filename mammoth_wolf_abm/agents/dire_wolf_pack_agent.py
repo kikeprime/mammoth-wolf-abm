@@ -8,6 +8,13 @@ import mammoth_wolf_abm.model as abm
 
 
 class DireWolfPackAgent(Agent):
+    """Agent class for dire wolf packs.
+
+    Parameters:
+        unique_id (int): Unique identifier for this agent (legacy support)
+        model (MammothWolfModel): the MammothWolf model
+        pack_id (int): Unique identifier for this dire wolf pack
+    """
     def __init__(self, unique_id: int, model: Model, pack_id: int):
         if version("mesa") == "2.4.0":
             super().__init__(unique_id=unique_id, model=model)
@@ -25,10 +32,11 @@ class DireWolfPackAgent(Agent):
         self.members: list[Agent] = []
 
     def step(self):
+        """Actions of the agent during one step of the simulation."""
+        # Step 1: Move all members of the pack to a neighboring cell.
         self.move()
-        if len(self.members) == 0:
-            self.model: abm.MammothWolfModel
-            self.model.schedule.remove(agent=self)
+        # Step 2: If no members are left, disband the pack.
+        self.check_disbanding()
 
     def move(self):
         """Implement movement of the pack."""
@@ -47,10 +55,16 @@ class DireWolfPackAgent(Agent):
                     self.model.grid.move_agent(agent=agent, pos=dest_cell)
 
     def add_member(self, dire_wolf: Agent):
+        """Add a dire wolf to the pack.
+        :param DireWolfAgent dire_wolf: The dire wolf to be added to the pack.
+        """
         dire_wolf.pack = self.pack_id
         self.members.append(dire_wolf)
 
     def remove_member(self, dire_wolf: Agent):
+        """Remove a dire wolf from the pack.
+        :param DireWolfAgent dire_wolf: The dire wolf to be removed from the pack.
+        """
         dire_wolf.pack = None
         self.members.remove(dire_wolf)
 
@@ -75,3 +89,10 @@ class DireWolfPackAgent(Agent):
                 dest_cells.append(cell)
                 cells_with_mammoth.append(cell)
         return dest_cells, cells_with_mammoth
+
+    def check_disbanding(self):
+        """If no members are left, disband the pack."""
+        if len(self.members) == 0:
+            self.model: abm.MammothWolfModel
+            self.model.schedule.remove(agent=self)
+
