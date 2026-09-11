@@ -1,7 +1,7 @@
 from mesa.datacollection import DataCollector
 from mesa.model import Model
 from mesa.space import MultiGrid
-from mesa.time import RandomActivation
+from mesa.time import RandomActivationByType
 
 from mammoth_wolf_abm.agents import AnimalData, DireWolfAgent, DireWolfData, GrassAgent, MammothAgent
 import mammoth_wolf_abm.utils.counters as counters
@@ -84,11 +84,10 @@ class MammothWolfModel(Model):
             birth_interval=dire_wolf_birth_interval,
             litter_size=dire_wolf_litter_size,
             hunt_success_rate=dire_wolf_hunt_success_rate,
-            pack=0,
             is_child=False
         )
 
-        self.schedule = RandomActivation(model=self)
+        self.schedule = RandomActivationByType(model=self)
         self.grid = MultiGrid(width=width, height=height, torus=torus)
 
         self.n_mammoth = n_mammoth
