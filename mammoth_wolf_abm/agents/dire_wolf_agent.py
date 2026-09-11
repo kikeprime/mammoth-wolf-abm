@@ -2,6 +2,7 @@ from mesa.model import Model
 
 from .animal_agent import AnimalAgent
 from .dire_wolf_data import DireWolfData
+from .dire_wolf_pack_agent import DireWolfPackAgent
 from .mammoth_agent import MammothAgent
 import mammoth_wolf_abm.model as abm
 
@@ -71,8 +72,32 @@ class DireWolfAgent(AnimalAgent):
         # self.reproduce()
         # Step 4: Aging.
         self.aging()
-        # Step 5: Check natural death and starvation.
+        # Step 4: Check pack size and leave if it's too large.
+        self.leave_pack()
+        # Step 6: Check natural death and starvation.
         self.check_death()
+
+    def leave_pack(self):
+        self.model: abm.MammothWolfModel
+        pack = self.model.packs[self.pack]
+        if len(pack.members) > self.model.max_dire_wolf_pack_size:
+            ages = []
+            for member in pack.members:
+                ages.append(member.age)
+            if max(ages) == self.age:
+                pack.remove_member(self)
+                self.create_pack()
+
+    def create_pack(self):
+        self.model: abm.MammothWolfModel
+        pack = DireWolfPackAgent(
+            unique_id=self.model.next_id(),
+            model=self.model,
+            pack_id=len(self.model.packs),
+        )
+        pack.add_member(dire_wolf=self)
+        self.model.place_agent(agent=pack, pos=self.pos)
+        self.model.packs.append(pack)
 
     def move(self):
         """DireWolfPackAgent moves the agent."""

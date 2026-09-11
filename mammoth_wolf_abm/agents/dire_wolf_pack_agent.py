@@ -4,7 +4,6 @@ from mesa.agent import Agent
 from mesa.model import Model
 
 from .mammoth_agent import MammothAgent
-from .dire_wolf_agent import DireWolfAgent
 import mammoth_wolf_abm.model as abm
 
 
@@ -23,7 +22,7 @@ class DireWolfPackAgent(Agent):
         self.unique_id = unique_id
         self.model = model
         self.pack_id = pack_id
-        self.members: list[DireWolfAgent] = []
+        self.members: list[Agent] = []
 
     def step(self):
         self.move()
@@ -47,11 +46,12 @@ class DireWolfPackAgent(Agent):
                 if agent.pos is not None:
                     self.model.grid.move_agent(agent=agent, pos=dest_cell)
 
-    def add_member(self, dire_wolf: DireWolfAgent):
+    def add_member(self, dire_wolf: Agent):
         dire_wolf.pack = self.pack_id
         self.members.append(dire_wolf)
 
-    def remove_member(self, dire_wolf: DireWolfAgent):
+    def remove_member(self, dire_wolf: Agent):
+        dire_wolf.pack = None
         self.members.remove(dire_wolf)
 
     def get_dest_cells(self) -> tuple[list, list]:
