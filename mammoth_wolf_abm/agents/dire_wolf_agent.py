@@ -72,7 +72,7 @@ class DireWolfAgent(AnimalAgent):
         self.reproduce()
         # Step 4: Aging.
         self.aging()
-        # Step 4: Check pack size and leave if it's too large.
+        # Step 5: Check pack size and leave if it's too large.
         self.leave_pack()
         # Step 6: Check natural death and starvation.
         self.check_death()
