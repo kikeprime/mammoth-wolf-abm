@@ -95,4 +95,3 @@ class DireWolfPackAgent(Agent):
         if len(self.members) == 0:
             self.model: abm.MammothWolfModel
             self.model.schedule.remove(agent=self)
-
