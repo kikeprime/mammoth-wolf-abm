@@ -174,8 +174,8 @@
         "dire_wolf_litter_size": {
             "type": "Slider",
             "params": {
-                "name": "Litter size of woolly mammoths",
-                "value": 4,
+                "name": "Litter size of dire wolves",
+                "value": 6,
                 "min_value": 1,
                 "max_value": 10,
                 "step": 1,
