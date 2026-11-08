@@ -65,7 +65,7 @@
             "type": "Slider",
             "params": {
                 "name": "EP gain for woolly mammoths",
-                "value": 5,
+                "value": 12,
                 "min_value": 1,
                 "max_value": 100,
                 "step": 1,
@@ -75,7 +75,7 @@
             "type": "Slider",
             "params": {
                 "name": "Maximum age of woolly mammoths (years)",
-                "value": 60,
+                "value": 65,
                 "min_value": 1,
                 "max_value": 100,
                 "step": 1,
@@ -195,7 +195,7 @@
             "type": "Slider",
             "params": {
                 "name": "Maximum size of a dire wolf pack",
-                "value": 10,
+                "value": 13,
                 "min_value": 1,
                 "max_value": 100,
                 "step": 1,
