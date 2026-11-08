@@ -115,6 +115,7 @@ class MammothWolfModel(Model):
                 "Ratio of grass patches (%)": counters.count_grass_cells,
                 "Number of mammoths": counters.count_mammoths,
                 "Number of dire wolves": counters.count_dire_wolves,
+                "Number of dire wolf packs": counters.count_dire_wolf_packs,
             }
         )
         self.datacollector.collect(model=self)

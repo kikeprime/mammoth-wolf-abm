@@ -1,7 +1,7 @@
 from mesa.model import Model
 
 import mammoth_wolf_abm.model as abm
-from mammoth_wolf_abm.agents import DireWolfAgent, GrassAgent, MammothAgent
+from mammoth_wolf_abm.agents import DireWolfAgent, DireWolfPackAgent, GrassAgent, MammothAgent
 
 
 def count_grass_cells(model: Model) -> float:
@@ -47,4 +47,18 @@ def count_dire_wolves(model: Model, pack: int = None) -> int:
         if isinstance(agent, DireWolfAgent):
             if pack is None or agent.pack == pack:
                 result += 1
+    return result
+
+
+def count_dire_wolf_packs(model: Model) -> int:
+    """
+    Return the number of dire wolf packs.
+    :param MammothWolfModel model: Model whose dire wolf pack agents are counted
+    :returns int: Number of dire wolf packs
+    """
+    model: abm.MammothWolfModel
+    result = 0
+    for agent in model.schedule.agents:
+        if isinstance(agent, DireWolfPackAgent):
+            result += 1
     return result
