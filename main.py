@@ -4,7 +4,7 @@ from mammoth_wolf_abm.model import MammothWolfModel
 from mammoth_wolf_abm.server import params
 
 
-def main(seed: int | None = None, steps: int = 0):
+def main(seed: int | float | None = None, steps: int = 0):
     param_dict = {}
     for key in params.keys():
         if type(params[key]) is int:
@@ -19,13 +19,20 @@ def main(seed: int | None = None, steps: int = 0):
     model = MammothWolfModel(**param_dict)
     for i in range(steps):
         model.step()
+    df = model.datacollector.get_model_vars_dataframe()
+    df.to_csv(
+        f"mammoth-wolf-abm-{model.seed}.csv",
+        sep=";",
+        decimal=",",
+        index=False,
+    )
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="Mammoth - Dire Wolf ABM")
     parser.add_argument(
         "--seed",
-        type=int,
+        type=float,
         default=None,
         help="Random Seed",
     )

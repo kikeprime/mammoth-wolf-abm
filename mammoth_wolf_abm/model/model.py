@@ -97,6 +97,7 @@ class MammothWolfModel(Model):
         self.packs = []
 
         if allow_seed:
+            self._seed = random_seed
             self.random.seed(a=random_seed)
 
         # Adding grass
@@ -188,3 +189,7 @@ class MammothWolfModel(Model):
         """Place an agent."""
         self.schedule.add(agent=agent)
         self.grid.place_agent(agent=agent, pos=pos)
+
+    @property
+    def seed(self):
+        return self._seed
