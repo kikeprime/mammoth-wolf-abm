@@ -4,7 +4,7 @@ from mammoth_wolf_abm.model import MammothWolfModel
 from mammoth_wolf_abm.server import params
 
 
-def main(seed: int | None = None):
+def main(seed: int | None = None, steps: int = 0):
     param_dict = {}
     for key in params.keys():
         if type(params[key]) is int:
@@ -17,16 +17,23 @@ def main(seed: int | None = None):
     else:
         param_dict["allow_seed"] = False
     model = MammothWolfModel(**param_dict)
+    for i in range(steps):
+        model.step()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="Mammoth - Dire Wolf ABM")
     parser.add_argument(
-        dest="seed",
+        "--seed",
         type=int,
-        nargs="?",
         default=None,
         help="Random Seed",
     )
+    parser.add_argument(
+        "--steps",
+        type=int,
+        default=36500,
+        help="Steps",
+    )
     args = parser.parse_args()
-    main(seed=args.seed)
+    main(seed=args.seed, steps=args.steps)
