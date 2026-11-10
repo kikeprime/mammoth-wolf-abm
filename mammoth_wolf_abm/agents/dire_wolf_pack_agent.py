@@ -94,4 +94,5 @@ class DireWolfPackAgent(Agent):
         """If no members are left, disband the pack."""
         if len(self.members) == 0:
             self.model: abm.MammothWolfModel
+            self.model.grid.remove_agent(agent=self)
             self.model.schedule.remove(agent=self)
