@@ -97,6 +97,7 @@ class MammothWolfModel(Model):
         self.packs = []
 
         if allow_seed:
+            self._seed = random_seed
             self.random.seed(a=random_seed)
 
         # Adding grass
@@ -115,6 +116,7 @@ class MammothWolfModel(Model):
                 "Ratio of grass patches (%)": counters.count_grass_cells,
                 "Number of mammoths": counters.count_mammoths,
                 "Number of dire wolves": counters.count_dire_wolves,
+                "Number of dire wolf packs": counters.count_dire_wolf_packs,
             }
         )
         self.datacollector.collect(model=self)
@@ -187,3 +189,11 @@ class MammothWolfModel(Model):
         """Place an agent."""
         self.schedule.add(agent=agent)
         self.grid.place_agent(agent=agent, pos=pos)
+
+    @property
+    def seed(self) -> int:
+        """
+        Access to the model's random seed.
+        :returns int: the random seed of the model
+        """
+        return self._seed

@@ -128,3 +128,9 @@ class DireWolfAgent(AnimalAgent):
                     for dire_wolf in self.model.packs[self.pack].members:
                         if dire_wolf.pack == self.pack:
                             dire_wolf.energy = dire_wolf.ep_gain
+    
+    def die(self):
+        """Implement removal of the agent."""
+        pack = self.model.packs[self.pack]
+        pack.remove_member(self)
+        super().die()
