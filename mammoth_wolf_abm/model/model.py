@@ -191,5 +191,9 @@ class MammothWolfModel(Model):
         self.grid.place_agent(agent=agent, pos=pos)
 
     @property
-    def seed(self):
+    def seed(self) -> int:
+        """
+        Access to the model's random seed.
+        :returns int: the random seed of the model
+        """
         return self._seed
